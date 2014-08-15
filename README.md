@@ -1,2 +1,2 @@
-Piirtosovellus
-==============
+Android drawing app
+===================
