@@ -16,7 +16,6 @@ import java.util.List;
 
 
 public class MainMenu extends Activity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +23,7 @@ public class MainMenu extends Activity {
 
         final ListView listview = (ListView) findViewById(R.id.list);
 
-        String[] values = new String[] { "Piirrä", "Tietoja" };
+        String[] values = new String[]{"Piirrä", "Tietoja"};
 
         final ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < values.length; ++i) {
@@ -55,7 +54,6 @@ public class MainMenu extends Activity {
 
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
