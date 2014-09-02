@@ -1,13 +1,17 @@
 package studies.drawingapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -41,18 +45,42 @@ public class MainMenu extends Activity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+
+                promptName("Enter name", "Please enter the name of the person");
             }
 
         });
+    }
+
+    private void promptName(String title, String message) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle(title);
+        alert.setMessage(message);
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString();
+
+                Intent intent = new Intent(MainMenu.this, DrawingCanvas.class);
+                intent.putExtra("username", value);
+                startActivity(intent);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+
+
     }
 
     @Override
