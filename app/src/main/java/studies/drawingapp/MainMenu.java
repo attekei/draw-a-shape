@@ -2,6 +2,7 @@ package studies.drawingapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,12 +15,15 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 
 public class MainMenu extends Activity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +31,11 @@ public class MainMenu extends Activity {
 
         final ListView listview = (ListView) findViewById(R.id.list);
 
-        String[] values = new String[]{"Piirrä", "Tietoja"};
+        MainMenuItem[] menuItems = constructMenuItems();
 
-        final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
+        final ArrayList<MainMenuItem> list = new ArrayList<MainMenuItem>();
+        for (int i = 0; i < menuItems.length; ++i) {
+            list.add(menuItems[i]);
         }
 
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
@@ -44,15 +48,59 @@ public class MainMenu extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-
-                promptName("Enter name", "Please enter the name of the person");
+                final MainMenuItem item = (MainMenuItem) parent.getItemAtPosition(position);
+                item.action();
             }
 
         });
+
     }
 
-    private void promptName(String title, String message) {
+    private MainMenuItem[] constructMenuItems() {
+        MainMenuItem continueDrawingItem = new MainMenuItem("Continue current drawing session") {
+            @Override
+            public void action() {
+
+            }
+        };
+
+        MainMenuItem startNewDrawingItem = new MainMenuItem("Start new drawing session") {
+            @Override
+            public void action() {
+                promptName("Enter name", "Please enter the name of the person", new OnNameEnteredListener() {
+                    @Override
+                    public void onNameEntered(String name) {
+                        Intent intent = new Intent(MainMenu.this, DrawingCanvas.class);
+                        intent.putExtra("username", name);
+                        startActivity(intent);
+                    }
+                });
+            }
+        };
+
+        MainMenuItem openDirectoryItem = new MainMenuItem("Open drawing file directory") {
+            @Override
+            public void action() {
+
+            }
+        };
+
+        MainMenuItem quitItem = new MainMenuItem("Quit") {
+            @Override
+            public void action() {
+
+            }
+        };
+
+        return new MainMenuItem[]{
+                continueDrawingItem,
+                startNewDrawingItem,
+                openDirectoryItem,
+                quitItem
+        };
+    }
+
+    private void promptName(String title, String message, final OnNameEnteredListener listener) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle(title);
@@ -64,17 +112,14 @@ public class MainMenu extends Activity {
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String value = input.getText().toString();
-
-                Intent intent = new Intent(MainMenu.this, DrawingCanvas.class);
-                intent.putExtra("username", value);
-                startActivity(intent);
+                listener.onNameEntered(input.getText().toString());
             }
         });
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
             }
         });
 
@@ -102,11 +147,11 @@ public class MainMenu extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<String> {
+    private class StableArrayAdapter extends ArrayAdapter<MainMenuItem> {
 
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+        HashMap<MainMenuItem, Integer> mIdMap = new HashMap<MainMenuItem, Integer>();
 
-        public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
+        public StableArrayAdapter(Context context, int textViewResourceId, List<MainMenuItem> objects) {
             super(context, textViewResourceId, objects);
             for (int i = 0; i < objects.size(); ++i) {
                 mIdMap.put(objects.get(i), i);
@@ -115,7 +160,7 @@ public class MainMenu extends Activity {
 
         @Override
         public long getItemId(int position) {
-            String item = getItem(position);
+            MainMenuItem item = getItem(position);
             return mIdMap.get(item);
         }
 
@@ -124,5 +169,9 @@ public class MainMenu extends Activity {
             return true;
         }
 
+    }
+
+    private interface OnNameEnteredListener {
+        public void onNameEntered(String name);
     }
 }
