@@ -14,7 +14,8 @@ public class DrawingCanvasView extends View {
 
     private Paint drawPaint, canvasPaint;
 
-    private int paintColor = 0xFF660000;
+    private int strokeWidth = 20;
+    private int paintColor = 0x00000000;
 
     private Canvas drawCanvas;
 
@@ -25,13 +26,13 @@ public class DrawingCanvasView extends View {
         setupDrawing();
     }
 
-    protected void setupDrawing (){
+    protected void setupDrawing() {
         drawPath = new Path();
         drawPaint = new Paint();
 
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(20);
+        drawPaint.setStrokeWidth(strokeWidth);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -52,22 +53,18 @@ public class DrawingCanvasView extends View {
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //detect user touch
         float touchX = event.getX();
         float touchY = event.getY();
 
-        //respond to down, move and up events
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                drawPath.moveTo(touchX, touchY);
+                setPathStartLocation(touchX, touchY);
                 break;
             case MotionEvent.ACTION_MOVE:
-                drawPath.lineTo(touchX, touchY);
+                continuePathToLocation(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
-                drawPath.lineTo(touchX, touchY);
-                drawCanvas.drawPath(drawPath, drawPaint);
-                drawPath.reset();
+                drawPathAndStartNewPath(touchX, touchY);
                 break;
             default:
                 return false;
@@ -76,5 +73,19 @@ public class DrawingCanvasView extends View {
         invalidate();
         return true;
 
+    }
+
+    private void setPathStartLocation(float x, float y) {
+        drawPath.moveTo(x, y);
+    }
+
+    private void drawPathAndStartNewPath(float x, float y) {
+        drawPath.lineTo(x, y);
+        drawCanvas.drawPath(drawPath, drawPaint);
+        drawPath.reset();
+    }
+
+    private void continuePathToLocation(float x, float y) {
+        drawPath.lineTo(x, y);
     }
 }
