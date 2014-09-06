@@ -22,15 +22,7 @@ public class DrawingCanvas extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        enableFullscreen();
-
         setContentView(R.layout.activity_drawing_canvas);
-    }
-
-    private void enableFullscreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }
 
