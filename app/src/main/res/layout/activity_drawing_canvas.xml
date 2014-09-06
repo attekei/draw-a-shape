@@ -5,16 +5,9 @@
     android:background="#0099cc"
     tools:context="studies.drawingapp.DrawingCanvas">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <TextView android:id="@+id/fullscreen_content"
+    <studies.drawingapp.DrawingCanvasView
+        android:id="@+id/drawing_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:keepScreenOn="true"
-        android:textColor="#33b5e5"
-        android:textStyle="bold"
-        android:textSize="50sp"
-        android:gravity="center"
-        android:text="@string/dummy_content" />
+        android:background="#FFFFFFFF" />
 </FrameLayout>
