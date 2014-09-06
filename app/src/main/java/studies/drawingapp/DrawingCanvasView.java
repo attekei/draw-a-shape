@@ -51,6 +51,7 @@ public class DrawingCanvasView extends View {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
     }
+    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
@@ -69,11 +70,14 @@ public class DrawingCanvasView extends View {
             default:
                 return false;
         }
-        //redraw
-        invalidate();
+
+        redrawScreen();
+
         return true;
 
     }
+
+    private void redrawScreen() { invalidate(); }
 
     private void setPathStartLocation(float x, float y) {
         drawPath.moveTo(x, y);
