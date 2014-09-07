@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import studies.drawingapp.DrawingCanvas;
 import studies.drawingapp.R;
@@ -20,7 +21,6 @@ import studies.drawingapp.R;
 
 public class MainMenu extends Activity {
     public MainMenuItem[] menuItems;
-    public
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,7 @@ public class MainMenu extends Activity {
         menuItems = constructMenuItems();
 
         final ArrayList<MainMenuItem> list = new ArrayList<MainMenuItem>();
-        for (int i = 0; i < menuItems.length; ++i) {
-            list.add(menuItems[i]);
-        }
+        Collections.addAll(list, menuItems);
 
         final MainMenuArrayAdapter adapter = new MainMenuArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
