@@ -1,11 +1,12 @@
-package studies.drawingapp;
+package studies.drawingapp.mainmenu;
 
 public abstract class MainMenuItem {
     public MainMenuItem(String text) {
         this.text = text;
     }
 
-    public String text;
+    public String text = "";
+
     abstract public void action();
 
     public String toString() { return text; }

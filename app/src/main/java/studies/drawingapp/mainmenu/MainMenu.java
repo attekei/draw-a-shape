@@ -1,9 +1,7 @@
-package studies.drawingapp;
+package studies.drawingapp.mainmenu;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,18 +9,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
+
+import studies.drawingapp.DrawingCanvas;
+import studies.drawingapp.R;
 
 
 public class MainMenu extends Activity {
+    public MainMenuItem[] menuItems;
+    public
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +29,14 @@ public class MainMenu extends Activity {
 
         final ListView listview = (ListView) findViewById(R.id.list);
 
-        MainMenuItem[] menuItems = constructMenuItems();
+        menuItems = constructMenuItems();
 
         final ArrayList<MainMenuItem> list = new ArrayList<MainMenuItem>();
         for (int i = 0; i < menuItems.length; ++i) {
             list.add(menuItems[i]);
         }
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
+        final MainMenuArrayAdapter adapter = new MainMenuArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
 
         listview.setAdapter(adapter);
@@ -145,30 +143,6 @@ public class MainMenu extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class StableArrayAdapter extends ArrayAdapter<MainMenuItem> {
-
-        HashMap<MainMenuItem, Integer> mIdMap = new HashMap<MainMenuItem, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId, List<MainMenuItem> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            MainMenuItem item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
     }
 
     private interface OnNameEnteredListener {
