@@ -14,8 +14,8 @@ public class DrawingCanvasView extends View {
 
     private Paint drawPaint, canvasPaint;
 
-    private int strokeWidth = 20;
-    private int paintColor = 0x00000000;
+    private int strokeWidth = 14;
+    private int paintColor = 0xFF000000;
 
     private Canvas drawCanvas;
 
