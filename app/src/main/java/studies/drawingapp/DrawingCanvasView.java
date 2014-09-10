@@ -21,6 +21,9 @@ public class DrawingCanvasView extends View {
 
     private Bitmap canvasBitmap;
 
+
+
+
     public DrawingCanvasView(Context context, AttributeSet attrs){
         super(context, attrs);
         setupDrawing();
