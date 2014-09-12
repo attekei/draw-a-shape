@@ -5,13 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 public class DrawingCanvasView extends View {
     private Path drawPath;
-
+    private static final String TAG = "MyActivity";
     private Paint drawPaint, canvasPaint;
 
     private int strokeWidth = 14;
@@ -51,8 +57,18 @@ public class DrawingCanvasView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Piirto-ohjelma";
+        Log.v(TAG, filePath);
+        try {
+            canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(filePath)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
     
     @Override
@@ -95,4 +111,17 @@ public class DrawingCanvasView extends View {
     private void continuePathToLocation(float x, float y) {
         drawPath.lineTo(x, y);
     }
+    public Bitmap getBitmap()
+    {
+        //this.measure(100, 100);
+        //this.layout(0, 0, 100, 100);
+        this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+        this.setDrawingCacheEnabled(false);
+
+
+        return bmp;
+    }
+
 }

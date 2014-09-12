@@ -1,29 +1,24 @@
 package studies.drawingapp;
 
-import studies.drawingapp.util.SystemUiHider;
+
 import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Context;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import java.util.ArrayList;
-import java.util.Collections;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 
 
 public class DrawingCanvas extends Activity {
+
+    private static final String TAG = "MyActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,35 +27,55 @@ public class DrawingCanvas extends Activity {
         final Button button = (Button) findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Perform action on click
+                AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
+                alert.setTitle("Varmistus");
+                alert.setMessage("Haluatko varmasti tallentaa");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                       
+
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+                alert.show();
+
             }
         });
+
     }
-    private void promptName(String title, String message, final OnNameEnteredListener listener) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Varmistus");
-        alert.setMessage("Haluatko varmasti tallentaa");
+    public  void  saveBitmap (Bitmap savePic)  {
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Piirto-ohjelma";
 
-        // Set an EditText view to get user input
-        final EditText input = new EditText(this);
-        alert.setView(input);
+        File file = new File(filePath);
+        File path = new File(file.getParent());
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //String value = input.getText();
-                // Do something with value!
+        if (savePic != null) {
+            try {
+                // build directory
+                if (file.getParent() != null && !path.isDirectory()) {
+                    path.mkdirs();
+                }
+                // output image to file
+                FileOutputStream fos = new FileOutputStream(filePath);
+                savePic.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                fos.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
+        } else {
+            Log.v(TAG, "savePicture image parsing error");
+        }
 
-        alert.show();
-    };
-
+    }
 }
 
