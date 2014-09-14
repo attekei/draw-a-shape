@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
 
 public class DrawingCanvasView extends View {
     private Path drawPath;
-    private static final String TAG = "MyActivity";
+    private static final String TAG = "Piirto";
     private Paint drawPaint, canvasPaint;
 
     private int strokeWidth = 14;
@@ -62,11 +62,12 @@ public class DrawingCanvasView extends View {
         canvas.drawPath(drawPath, drawPaint);
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/Piirto-ohjelma";
-        Log.v(TAG, filePath);
+
         try {
             canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(filePath)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Log.v(TAG, "Tallennus ei oonistu");
         }
 
     }

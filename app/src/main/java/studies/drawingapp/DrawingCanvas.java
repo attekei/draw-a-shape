@@ -4,6 +4,7 @@ package studies.drawingapp;
 import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import studies.drawingapp.mainmenu.MainMenu;
 
 
 public class DrawingCanvas extends Activity {
@@ -32,7 +34,8 @@ public class DrawingCanvas extends Activity {
                 alert.setMessage("Haluatko varmasti tallentaa");
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                       
+                        Intent intent = new Intent(DrawingCanvas.this, MainMenu.class);
+                        startActivity(intent);
 
                     }
                 });
