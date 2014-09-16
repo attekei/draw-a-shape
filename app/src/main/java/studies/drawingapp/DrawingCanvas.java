@@ -20,12 +20,14 @@ import studies.drawingapp.mainmenu.MainMenu;
 
 public class DrawingCanvas extends Activity {
 
-    private static final String TAG = "MyActivity";
+    private static final String TAG = "DrawingCanvas";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_drawing_canvas);
+
+
         final Button button = (Button) findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -34,6 +36,7 @@ public class DrawingCanvas extends Activity {
                 alert.setMessage("Haluatko varmasti tallentaa");
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        saveBitmap(findViewById(R.id.drawing_canvas).getDrawingCache());
                         Intent intent = new Intent(DrawingCanvas.this, MainMenu.class);
                         startActivity(intent);
 
@@ -54,6 +57,7 @@ public class DrawingCanvas extends Activity {
     }
 
     public  void  saveBitmap (Bitmap savePic)  {
+
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/Piirto-ohjelma";
 
@@ -70,6 +74,7 @@ public class DrawingCanvas extends Activity {
                 FileOutputStream fos = new FileOutputStream(filePath);
                 savePic.compress(Bitmap.CompressFormat.PNG, 90, fos);
                 fos.close();
+                Log.i(TAG, "Saving the image was successful.");
 
             } catch (Exception e) {
                 e.printStackTrace();

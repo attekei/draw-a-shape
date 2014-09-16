@@ -36,6 +36,8 @@ public class DrawingCanvasView extends View {
     }
 
     protected void setupDrawing() {
+        this.setDrawingCacheEnabled(true);
+
         drawPath = new Path();
         drawPaint = new Paint();
 
