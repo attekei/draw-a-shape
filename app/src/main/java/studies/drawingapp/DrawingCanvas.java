@@ -57,9 +57,8 @@ public class DrawingCanvas extends Activity {
     }
 
     public  void  saveBitmap (Bitmap savePic)  {
-
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/Piirto-ohjelma";
+                "/drawing-app/" + "testikuva.png";
 
         File file = new File(filePath);
         File path = new File(file.getParent());
@@ -74,7 +73,7 @@ public class DrawingCanvas extends Activity {
                 FileOutputStream fos = new FileOutputStream(filePath);
                 savePic.compress(Bitmap.CompressFormat.PNG, 90, fos);
                 fos.close();
-                Log.i(TAG, "Saving the image was successful.");
+                Log.i(TAG, "Saving the image was successful." + filePath);
 
             } catch (Exception e) {
                 e.printStackTrace();
