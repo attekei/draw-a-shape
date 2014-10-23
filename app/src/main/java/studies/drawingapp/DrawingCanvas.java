@@ -36,7 +36,19 @@ public class DrawingCanvas extends Activity {
                 alert.setMessage("Haluatko varmasti tallentaa");
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        saveBitmap(findViewById(R.id.drawing_canvas).getDrawingCache());
+                        View drawingCanvas = findViewById(R.id.drawing_canvas);
+                        drawingCanvas.buildDrawingCache();
+
+                        Bitmap bitmap = Bitmap.createBitmap(
+                                drawingCanvas.getDrawingCache(),
+                                0,
+                                0,
+                                drawingCanvas.getWidth(),
+                                drawingCanvas.getHeight()
+                        );
+
+                        analyzeImage(bitmap, bitmap);
+                        saveBitmap(bitmap);
                         Intent intent = new Intent(DrawingCanvas.this, MainMenu.class);
                         startActivity(intent);
 
@@ -54,6 +66,14 @@ public class DrawingCanvas extends Activity {
             }
         });
 
+    }
+
+    public double analyzeImage(Bitmap drawing, Bitmap model) {
+        DrawingAnalyzer analyzer = new DrawingAnalyzer(drawing, model);
+
+        Double diff = analyzer.getDiffInPercents(100);
+        Log.i(TAG, "diff: " + diff.toString() + " guess: " + analyzer.getGuess().toString());
+        return diff;
     }
 
     public  void  saveBitmap (Bitmap savePic)  {
