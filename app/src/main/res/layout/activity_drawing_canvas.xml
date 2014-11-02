@@ -30,6 +30,7 @@
         android:id="@+id/saveButton"
         android:layout_gravity="right|bottom"
         android:clickable="true"
+        android:background="@drawable/readyquater"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp" />
 
@@ -42,6 +43,7 @@
         android:layout_gravity="right|top"
         android:clickable="true"
         android:focusable="true"
+        android:background="@drawable/buttonerase"
         android:enabled="true" />
 
     <Button
@@ -52,8 +54,8 @@
         android:id="@+id/pen"
         android:layout_gravity="right|top"
         android:clickable="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="200dp"
         android:enabled="true"
         android:focusableInTouchMode="true" />
 

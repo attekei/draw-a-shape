@@ -20,14 +20,14 @@ import studies.drawingapp.mainmenu.MainMenu;
 
 
 public class DrawingCanvas extends Activity {
-
+    private static boolean erase = true;
     private static final String TAG = "DrawingCanvas";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_drawing_canvas);
-
+        final Button pen = (Button) findViewById(R.id.pen);
 
         final Button button = (Button) findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -71,13 +71,16 @@ public class DrawingCanvas extends Activity {
 
             @Override
             public void onClick(View v) {
-                DrawingCanvasView.setEraser(true);
+                DrawingCanvasView.setEraser(erase);
+                erase = !erase;
+                eraser.setSelected(true);
+
 
             }
 
         });
 
-        final Button pen = (Button) findViewById(R.id.pen);
+
         pen.setOnClickListener(new View.OnClickListener(){
 
             @Override

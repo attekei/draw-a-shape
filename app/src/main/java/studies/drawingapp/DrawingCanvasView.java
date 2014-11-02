@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -122,22 +123,12 @@ public class DrawingCanvasView extends View {
     private void continuePathToLocation(float x, float y) {
         drawPath.lineTo(x, y);
     }
-    public Bitmap getBitmap()
-    {
-        //this.measure(100, 100);
-        //this.layout(0, 0, 100, 100);
-        this.setDrawingCacheEnabled(true);
-        this.buildDrawingCache();
-        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
-        this.setDrawingCacheEnabled(false);
 
-
-        return bmp;
-    }
     public static void setEraser(boolean isErase){
         erase=isErase;
         if (erase) {
             drawPaint.setColor(backgroundColor);
+
         }
         else drawPaint.setColor(paintColor);
 
