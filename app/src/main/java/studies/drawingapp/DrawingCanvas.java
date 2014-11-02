@@ -72,8 +72,8 @@ public class DrawingCanvas extends Activity {
             @Override
             public void onClick(View v) {
                 DrawingCanvasView.setEraser(erase);
+                eraser.setSelected(erase);
                 erase = !erase;
-                eraser.setSelected(true);
 
 
             }
