@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -18,15 +20,18 @@ import java.io.FileOutputStream;
 public class DrawingCanvasView extends View {
     private Path drawPath;
     private static final String TAG = "Piirto";
-    private Paint drawPaint, canvasPaint;
+    private Paint  canvasPaint;
 
     private int strokeWidth = 14;
-    private int paintColor = 0xFF000000;
+    private static int paintColor = 0xFF000000;
+    private static int backgroundColor = 0xFFFFFFFF;
+    private static boolean erase = false;
+
 
     private Canvas drawCanvas;
 
     private Bitmap canvasBitmap;
-
+    private static Paint drawPaint;
 
 
 
@@ -41,7 +46,10 @@ public class DrawingCanvasView extends View {
         drawPath = new Path();
         drawPaint = new Paint();
 
-        drawPaint.setColor(paintColor);
+        if (erase) {
+            drawPaint.setColor(backgroundColor);
+        }
+        else drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(strokeWidth);
         drawPaint.setStyle(Paint.Style.STROKE);
@@ -126,5 +134,12 @@ public class DrawingCanvasView extends View {
 
         return bmp;
     }
+    public static void setEraser(boolean isErase){
+        erase=isErase;
+        if (erase) {
+            drawPaint.setColor(backgroundColor);
+        }
+        else drawPaint.setColor(paintColor);
 
+    }
 }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -65,6 +66,28 @@ public class DrawingCanvas extends Activity {
 
             }
         });
+        final Button eraser = (Button) findViewById(R.id.eraser);
+        eraser.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                DrawingCanvasView.setEraser(true);
+
+            }
+
+        });
+
+        final Button pen = (Button) findViewById(R.id.pen);
+        pen.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                DrawingCanvasView.setEraser(false);
+
+            }
+
+        });
+
 
     }
 
