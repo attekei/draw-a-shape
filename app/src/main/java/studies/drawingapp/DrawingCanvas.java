@@ -27,7 +27,7 @@ public class DrawingCanvas extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_drawing_canvas);
-        final Button pen = (Button) findViewById(R.id.pen);
+        final Button pen = (Button) findViewById(R.id.penEraserToggler);
 
         final Button button = (Button) findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +66,7 @@ public class DrawingCanvas extends Activity {
 
             }
         });
-        final Button eraser = (Button) findViewById(R.id.eraser);
+        final Button eraser = (Button) findViewById(R.id.penEraserToggler);
         eraser.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -74,21 +74,16 @@ public class DrawingCanvas extends Activity {
                 DrawingCanvasView.setEraser(erase);
                 eraser.setSelected(erase);
                 erase = !erase;
-
-
             }
 
         });
 
 
         pen.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
                 DrawingCanvasView.setEraser(false);
-
             }
-
         });
 
 

@@ -12,8 +12,8 @@
         android:background="#FFFFFFFF" />
 
     <ImageView
-        android:layout_width="260dp"
-        android:layout_height="190dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:id="@+id/imageView"
         android:layout_gravity="left|top"
         android:clickable="true"
@@ -21,43 +21,28 @@
         android:adjustViewBounds="true"
         android:minHeight="100dp"
         android:minWidth="100dp"
-        android:src="@drawable/apple"/>
+        android:src="@drawable/stoolquater"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Tallenna"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:id="@+id/saveButton"
         android:layout_gravity="right|bottom"
         android:clickable="true"
         android:background="@drawable/readyquater"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp" />
+        android:paddingRight="50dp"
+        android:paddingTop="50dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pyyhekumi"
-        android:id="@+id/eraser"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/penEraserToggler"
         android:layout_gravity="right|top"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/buttonerase"
-        android:enabled="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kynä"
-        android:id="@+id/pen"
-        android:layout_gravity="right|top"
-        android:clickable="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="200dp"
+        android:background="@drawable/pen_eraser_toggler"
         android:enabled="true"
-        android:focusableInTouchMode="true" />
-
-
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp" />
 </FrameLayout>
