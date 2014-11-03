@@ -95,7 +95,8 @@ public class DrawingCanvas extends Activity {
     }
 
     public double analyzeImage(Bitmap drawing, Bitmap model) {
-        DrawingAnalyzer analyzer = new DrawingAnalyzer(drawing, model);
+        //DrawingAnalyzer analyzer = new CMAESDrawingAnalyzer(drawing, model);
+        DrawingAnalyzer analyzer = new DummyDrawingAnalyzer();
 
         Double diff = analyzer.getDiffInPercents(100);
         Log.i(TAG, "diff: " + diff.toString() + " guess: " + analyzer.getGuess().toString());
