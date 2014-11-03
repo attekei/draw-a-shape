@@ -113,12 +113,11 @@ public class DrawingCanvasView extends View {
     }
 
     public static void setEraser(boolean isErase){
+        Log.v(TAG, "Eraser method works");
         erase=isErase;
         if (erase) {
             drawPaint.setColor(backgroundColor);
-
         }
         else drawPaint.setColor(paintColor);
-
     }
 }

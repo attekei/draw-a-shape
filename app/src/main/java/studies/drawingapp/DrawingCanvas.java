@@ -71,22 +71,13 @@ public class DrawingCanvas extends Activity {
 
             @Override
             public void onClick(View v) {
+                Log.v(TAG, "OnClick");
                 DrawingCanvasView.setEraser(erase);
                 eraser.setSelected(erase);
                 erase = !erase;
             }
 
         });
-
-
-        pen.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                DrawingCanvasView.setEraser(false);
-            }
-        });
-
-
     }
 
     public double analyzeImage(Bitmap drawing, Bitmap model) {

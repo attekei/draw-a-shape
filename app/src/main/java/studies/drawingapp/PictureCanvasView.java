@@ -13,13 +13,6 @@ import android.view.View;
 public class PictureCanvasView extends View {
     public PictureCanvasView(Context context){
         super(context);
-
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-
-    }
 }
