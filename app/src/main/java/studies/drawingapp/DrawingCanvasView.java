@@ -27,10 +27,7 @@ public class DrawingCanvasView extends View {
     private static int paintColor = 0xFF000000;
     private static int backgroundColor = 0xFFFFFFFF;
     private static boolean erase = false;
-
-
     private Canvas drawCanvas;
-
     private Bitmap canvasBitmap;
     private static Paint drawPaint;
 
@@ -71,15 +68,6 @@ public class DrawingCanvasView extends View {
 
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/Piirto-ohjelma";
-
-        try {
-            canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(filePath)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.v(TAG, "Tallennus ei oonistu");
-        }
 
     }
     
