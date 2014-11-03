@@ -113,7 +113,8 @@ public class DrawingCanvas extends Activity {
             try {
                 // build directory
                 if (file.getParent() != null && !path.isDirectory()) {
-                    path.mkdirs();
+                    boolean directoryCreated =  path.mkdirs();
+                    if (directoryCreated) Log.i(TAG, "Image directory created.");
                 }
                 // output image to file
                 FileOutputStream fos = new FileOutputStream(filePath);
