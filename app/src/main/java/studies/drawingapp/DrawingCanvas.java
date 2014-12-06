@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 
 import java.io.File;
@@ -20,13 +21,34 @@ import studies.drawingapp.mainmenu.MainMenu;
 
 
 public class DrawingCanvas extends Activity {
+    Bundle extras;
+    String newString;
     private static boolean erase = true;
     private static final String TAG = "DrawingCanvas";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_drawing_canvas);
+        final ImageView photo = (ImageView) findViewById(R.id.imageView);
+        extras = getIntent().getExtras();
+        if(extras == null) {
+            newString = null;
+        }
+        else {
+            newString = extras.getString("photo");
+        }
+        if (newString == "stool"){
+            photo.setImageResource(R.drawable.stoolquater);
+        }
+        else if (newString == "apple"){
+            photo.setImageResource(R.drawable.applequater);
+
+        }
+        if (newString == "bear"){
+            photo.setImageResource(R.drawable.bearquater);
+        }
+
+
         final Button pen = (Button) findViewById(R.id.penEraserToggler);
 
         final Button button = (Button) findViewById(R.id.saveButton);
@@ -117,6 +139,9 @@ public class DrawingCanvas extends Activity {
             Log.v(TAG, "savePicture image parsing error");
         }
 
+    }
+    public void changePhoto (String name){
+        View photo = findViewById(R.id.imageView);
     }
 }
 
