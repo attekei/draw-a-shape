@@ -2,7 +2,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="@drawable/newgame"
     android:baselineAligned="false">
 
     <ImageView
@@ -24,7 +24,7 @@
         android:src="@drawable/bear"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:paddingEnd="@dimen/activity_vertical_margin"
+        
         android:layout_marginLeft="150dp"
         android:clickable="true" />
 

@@ -70,6 +70,8 @@ public class DrawingCanvas extends Activity {
                     root.setBackgroundColor(Color.BLACK);
                     eraser.setVisibility(View.INVISIBLE);
                     button.setVisibility(View.INVISIBLE);
+                    root.setVisibility(View.INVISIBLE);
+
                     DrawingCanvasView.setDraw(false);
                 }
                 else{
@@ -81,6 +83,7 @@ public class DrawingCanvas extends Activity {
                     root.setBackgroundColor(Color.WHITE);
                     eraser.setVisibility(View.VISIBLE);
                     button.setVisibility(View.VISIBLE);
+                    root.setVisibility(View.VISIBLE);
                     DrawingCanvasView.setDraw(true);
                 }
             }
