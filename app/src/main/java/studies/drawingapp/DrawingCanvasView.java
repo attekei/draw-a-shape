@@ -5,18 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 public class DrawingCanvasView extends View {
     private Path drawPath;
@@ -30,15 +23,17 @@ public class DrawingCanvasView extends View {
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private static Paint drawPaint;
-
+    private static boolean draw= true;
 
 
     public DrawingCanvasView(Context context, AttributeSet attrs){
         super(context, attrs);
         setupDrawing();
+
     }
 
     protected void setupDrawing() {
+
         this.setDrawingCacheEnabled(true);
 
         drawPath = new Path();
@@ -47,13 +42,18 @@ public class DrawingCanvasView extends View {
         if (erase) {
             drawPaint.setColor(backgroundColor);
         }
-        else drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(strokeWidth);
-        drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
+
+            drawPaint.setColor(paintColor);
+            drawPaint.setAntiAlias(true);
+            drawPaint.setStrokeWidth(strokeWidth);
+            drawPaint.setStyle(Paint.Style.STROKE);
+            drawPaint.setStrokeJoin(Paint.Join.ROUND);
+            drawPaint.setStrokeCap(Paint.Cap.ROUND);
+
+
+
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+
     }
 
     @Override
@@ -62,12 +62,11 @@ public class DrawingCanvasView extends View {
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
 
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
+            canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+            canvas.drawPath(drawPath, drawPaint);
 
     }
     
@@ -75,7 +74,7 @@ public class DrawingCanvasView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
-
+        if(draw) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 setPathStartLocation(touchX, touchY);
@@ -89,7 +88,7 @@ public class DrawingCanvasView extends View {
             default:
                 return false;
         }
-
+        }
         redrawScreen();
 
         return true;
@@ -120,4 +119,8 @@ public class DrawingCanvasView extends View {
         }
         else drawPaint.setColor(paintColor);
     }
+    public static void setDraw(boolean isDraw) {
+    draw = isDraw;
+    }
+
 }

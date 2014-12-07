@@ -3,13 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context="studies.drawingapp.DrawingCanvas">
+    tools:context="studies.drawingapp.DrawingCanvas"
+
+    android:focusable="false">
 
     <studies.drawingapp.DrawingCanvasView
         android:id="@+id/drawing_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFFFF" />
+        android:background="#FFFFFFFF"
+        />
 
     <ImageView
         android:layout_width="200dp"
@@ -45,4 +48,14 @@
         android:enabled="true"
         android:layout_marginRight="30dp"
         android:layout_marginTop="20dp" />
+
+    <ImageView
+        android:layout_width="446dp"
+        android:layout_height="446dp"
+        android:id="@+id/imageView2"
+        android:layout_gravity="center"
+        android:src="@drawable/stool"
+        android:adjustViewBounds="true"
+        android:visibility="invisible" />
+
 </FrameLayout>

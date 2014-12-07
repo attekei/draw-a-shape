@@ -37,7 +37,7 @@ public class MainMenuGraph extends Activity {
         imgThree.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenuGraph.this, DrawingCanvas.class);
-                intent.putExtra("photo", "stool ");
+                intent.putExtra("photo", "stool");
                 startActivity(intent);
             }
         });

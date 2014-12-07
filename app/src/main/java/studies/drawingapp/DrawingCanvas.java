@@ -6,12 +6,15 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 import java.io.File;
@@ -24,12 +27,18 @@ public class DrawingCanvas extends Activity {
     Bundle extras;
     String newString;
     private static boolean erase = true;
+    private static boolean backgroundBool = true;
     private static final String TAG = "DrawingCanvas";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawing_canvas);
         final ImageView photo = (ImageView) findViewById(R.id.imageView);
+        final ImageView photoMid = (ImageView) findViewById(R.id.imageView2);
+        final Button button = (Button) findViewById(R.id.saveButton);
+        final Button eraser = (Button) findViewById(R.id.penEraserToggler);
+       // photo.setImageResource(R.drawable.applequater);
         extras = getIntent().getExtras();
         if(extras == null) {
             newString = null;
@@ -37,21 +46,49 @@ public class DrawingCanvas extends Activity {
         else {
             newString = extras.getString("photo");
         }
-        if (newString == "stool"){
+        if (newString.equals( "stool")){
             photo.setImageResource(R.drawable.stoolquater);
+            photoMid.setImageResource(R.drawable.stool);
         }
-        else if (newString == "apple"){
+        else if  (newString.equals("apple")){
             photo.setImageResource(R.drawable.applequater);
-
+            photoMid.setImageResource(R.drawable.apple);
         }
-        if (newString == "bear"){
+        if ( (newString.equals("bear"))){
             photo.setImageResource(R.drawable.bearquater);
+            photoMid.setImageResource(R.drawable.bear);
         }
 
 
         final Button pen = (Button) findViewById(R.id.penEraserToggler);
+        photo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (backgroundBool) {
+                    backgroundBool = !backgroundBool;
+                    photoMid.setVisibility(View.VISIBLE);
+                    // Find the root view
 
-        final Button button = (Button) findViewById(R.id.saveButton);
+                    View root = findViewById(R.id.drawing_canvas);
+                    root.setBackgroundColor(Color.BLACK);
+                    eraser.setVisibility(View.INVISIBLE);
+                    button.setVisibility(View.INVISIBLE);
+                    DrawingCanvasView.setDraw(false);
+                }
+                else{
+                    backgroundBool = !backgroundBool;
+                    photoMid.setVisibility(View.INVISIBLE);
+                    // Find the root view
+
+                    View root = findViewById(R.id.drawing_canvas);
+                    root.setBackgroundColor(Color.WHITE);
+                    eraser.setVisibility(View.VISIBLE);
+                    button.setVisibility(View.VISIBLE);
+                    DrawingCanvasView.setDraw(true);
+                }
+            }
+        });
+
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
@@ -88,7 +125,7 @@ public class DrawingCanvas extends Activity {
 
             }
         });
-        final Button eraser = (Button) findViewById(R.id.penEraserToggler);
+
         eraser.setOnClickListener(new View.OnClickListener(){
 
             @Override
