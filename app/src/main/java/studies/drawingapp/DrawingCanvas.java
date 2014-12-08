@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -108,9 +109,14 @@ public class DrawingCanvas extends Activity {
                                 drawingCanvas.getHeight()
                         );
 
-                        analyzeImage(bitmap, bitmap);
-                        saveBitmap(bitmap);
-                        Intent intent = new Intent(DrawingCanvas.this, MainMenu.class);
+                       // analyzeImage(bitmap, bitmap);
+                       // saveBitmap(bitmap);
+                        changeBitmap(bitmap);
+                        Intent intent = new Intent(DrawingCanvas.this, ResultCanvas.class);
+                        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                        intent.putExtra("img", bs.toByteArray());
+                        intent.putExtra("photo", newString);
                         startActivity(intent);
 
                     }
@@ -178,8 +184,21 @@ public class DrawingCanvas extends Activity {
         }
 
     }
-    public void changePhoto (String name){
-        View photo = findViewById(R.id.imageView);
+    //TODO: Tuottaa NuLLPointeria... Pitäisi saada valkoinen poistettua kuvasta ennen kompressiota
+
+    public void changeBitmap(Bitmap myBitmap){
+        int [] allpixels = new int [ myBitmap.getHeight()*myBitmap.getWidth()];
+
+        myBitmap.getPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(),myBitmap.getHeight());
+
+        for(int i =0; i<myBitmap.getHeight()*myBitmap.getWidth();i++){
+
+            if( allpixels[i] == Color.WHITE)
+                allpixels[i] = Color.TRANSPARENT;
+        }
+
+        myBitmap.setPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());
     }
+
 }
 

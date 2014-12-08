@@ -2,13 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="@android:color/background_light"
     tools:context="studies.drawingapp.ResultCanvas">
 
-    <studies.drawingapp.ResultCanvasView
-        android:id="@+id/result_canvas"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFFFF" />
+    <ImageView
+        android:layout_width="370dp"
+        android:layout_height="370dp"
+        android:id="@+id/imageView"
+        android:layout_gravity="center" />
+
+
+
 
 </FrameLayout>
