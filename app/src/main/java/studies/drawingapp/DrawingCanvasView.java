@@ -21,8 +21,8 @@ public class DrawingCanvasView extends View {
     private static final String TAG = "Piirto";
     private Paint canvasPaint;
     private Paint eraserPaint;
-    private int strokeWidth = 14;
-    private static int paintColor = 0xFF000000;
+    private int strokeWidth = 10;
+    private static int paintColor = Color.BLACK;
     private static int backgroundColor = 0xFFFFFFFF;
     private static boolean erase = false;
     private Canvas drawCanvas;
@@ -122,7 +122,10 @@ public class DrawingCanvasView extends View {
         erase = isErase;
         if (erase) {
          drawPaint.setColor(backgroundColor);
-        } else drawPaint.setColor(paintColor);
+         drawPaint.setStrokeWidth(15);
+        } else {drawPaint.setColor(paintColor);
+            drawPaint.setStrokeWidth(10);
+        }
     }
 
     public static void setDraw(boolean isDraw) {

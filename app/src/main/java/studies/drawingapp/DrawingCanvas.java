@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +26,7 @@ import studies.drawingapp.mainmenu.MainMenu;
 
 
 public class DrawingCanvas extends Activity {
+    RequestQueue queue = Volley.newRequestQueue(this);  // this = context
     Bundle extras;
     String newString;
     private static boolean erase = true;
@@ -37,7 +41,6 @@ public class DrawingCanvas extends Activity {
         final ImageView photoMid = (ImageView) findViewById(R.id.imageView2);
         final Button button = (Button) findViewById(R.id.saveButton);
         final Button eraser = (Button) findViewById(R.id.penEraserToggler);
-       // photo.setImageResource(R.drawable.applequater);
         extras = getIntent().getExtras();
         if(extras == null) {
             newString = null;
@@ -72,14 +75,13 @@ public class DrawingCanvas extends Activity {
                     eraser.setVisibility(View.INVISIBLE);
                     button.setVisibility(View.INVISIBLE);
                     root.setVisibility(View.INVISIBLE);
-
                     DrawingCanvasView.setDraw(false);
                 }
                 else{
                     backgroundBool = !backgroundBool;
                     photoMid.setVisibility(View.INVISIBLE);
-                    // Find the root view
 
+                    // Find the root view
                     View root = findViewById(R.id.drawing_canvas);
                     root.setBackgroundColor(Color.WHITE);
                     eraser.setVisibility(View.VISIBLE);
@@ -111,7 +113,7 @@ public class DrawingCanvas extends Activity {
 
                        // analyzeImage(bitmap, bitmap);
                        // saveBitmap(bitmap);
-                        changeBitmap(bitmap);
+                        String pixels = changeBitmap(bitmap);
                         Intent intent = new Intent(DrawingCanvas.this, ResultCanvas.class);
                         ByteArrayOutputStream bs = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
@@ -186,18 +188,21 @@ public class DrawingCanvas extends Activity {
     }
     //TODO: Tuottaa NuLLPointeria... Pitäisi saada valkoinen poistettua kuvasta ennen kompressiota
 
-    public void changeBitmap(Bitmap myBitmap){
+    public static String changeBitmap(Bitmap myBitmap){
         int [] allpixels = new int [ myBitmap.getHeight()*myBitmap.getWidth()];
-
+        String pointString = "";
         myBitmap.getPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(),myBitmap.getHeight());
 
         for(int i =0; i<myBitmap.getHeight()*myBitmap.getWidth();i++){
-
-            if( allpixels[i] == Color.WHITE)
-                allpixels[i] = Color.TRANSPARENT;
+            int x = 0;
+            int y;
+            if( allpixels[i] == Color.BLACK)
+                x = i %  myBitmap.getWidth();
+                y = (int)(Math.floor((i/myBitmap.getWidth())));
+                pointString += " " + x + " " + y;
         }
 
-        myBitmap.setPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());
+        return pointString;
     }
 
 }

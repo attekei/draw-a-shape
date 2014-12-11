@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
@@ -26,6 +27,7 @@ public class ResultCanvas extends Activity {
     }
     private void setup(){
         final ImageView photo = (ImageView) findViewById(R.id.imageView);
+        final FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
         Resources r = getResources();
         Drawable[] layers = new Drawable[2];
         extras = getIntent().getExtras();
@@ -36,15 +38,15 @@ public class ResultCanvas extends Activity {
             newString = extras.getString("photo");
         }
         if (newString.equals( "stool")){
-            layers[1] = r.getDrawable(R.drawable.stool);
+            layers[0] = r.getDrawable(R.drawable.stool);
 
         }
         else if  (newString.equals("apple")){
-            layers[1] = r.getDrawable(R.drawable.apple);
+            layers[0] = r.getDrawable(R.drawable.apple);
 
         }
         else if ( (newString.equals("bear"))){
-            layers[1] = r.getDrawable(R.drawable.bear);
+            layers[0] = r.getDrawable(R.drawable.bear);
 
         }
         if(getIntent().hasExtra("img")) {
@@ -53,13 +55,13 @@ public class ResultCanvas extends Activity {
                     getIntent().getByteArrayExtra("img"), 0, getIntent().getByteArrayExtra("img").length);
 
             Drawable d = new BitmapDrawable(getResources(),b);
-            layers[0] = d;
+            frame.setBackground(d);
 
         }
 
 
-        LayerDrawable layerDrawable = new LayerDrawable(layers);
+        //LayerDrawable layerDrawable = new LayerDrawable(layers);
 
-        photo.setImageDrawable(layerDrawable);
+        photo.setImageDrawable(layers[0]);
     }
 }
