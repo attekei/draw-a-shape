@@ -83,7 +83,7 @@
     <orderEntry type="library" exported="" name="drawing-app-algoritm_2.11-1.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
-    <orderEntry type="module" module-name="volley" exported="" />
+    <orderEntry type="library" exported="" name="volley" level="project" />
   </component>
 </module>
 
