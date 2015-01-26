@@ -40,7 +40,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:id="@+id/penEraserToggler"
+        android:id="@+id/penEraserToggle"
         android:layout_gravity="right|top"
         android:clickable="true"
         android:focusable="true"

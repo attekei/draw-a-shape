@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -16,147 +15,133 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class DrawingCanvas extends Activity {
-   // RequestQueue queue = Volley.newRequestQueue(this);  // this = context
     Bundle extras;
-    String newString;
+    String modelImageSlug;
 
-    private static boolean erase = true;
-    private static boolean backgroundBool = true;
+    private static boolean eraserIsActive = false;
+    private static boolean showModelPreview = false;
+
     private static final String TAG = "DrawingCanvas";
+
+    private ImageView photo;
+    private ImageView photoMid;
+    private Button button;
+    private Button penEraserToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_drawing_canvas);
-        final ImageView photo = (ImageView) findViewById(R.id.imageView);
-        final ImageView photoMid = (ImageView) findViewById(R.id.imageView2);
-        final Button button = (Button) findViewById(R.id.saveButton);
-        final Button eraser = (Button) findViewById(R.id.penEraserToggler);
+        photo = (ImageView) findViewById(R.id.imageView);
+        photoMid = (ImageView) findViewById(R.id.imageView2);
+        button = (Button) findViewById(R.id.saveButton);
+        penEraserToggle = (Button) findViewById(R.id.penEraserToggle);
+
         extras = getIntent().getExtras();
-        if(extras == null) {
-            newString = null;
-        }
-        else {
-            newString = extras.getString("photo");
-            changeImage(newString);
-        }
+        modelImageSlug = extras.getString("photo");
+        setModelImage(modelImageSlug);
 
+        bindEvents();
+    }
 
-
-        final Button pen = (Button) findViewById(R.id.penEraserToggler);
+    private void bindEvents() {
         photo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (backgroundBool) {
-                    backgroundBool = !backgroundBool;
-                    photoMid.setVisibility(View.VISIBLE);
-                    // Find the root view
-                    // Pimennys
-                    View root = findViewById(R.id.drawing_canvas);
-                    root.setBackgroundColor(Color.BLACK);
-                    eraser.setVisibility(View.INVISIBLE);
-                    button.setVisibility(View.INVISIBLE);
-                    root.setVisibility(View.INVISIBLE);
-                    photo.setImageResource(R.drawable.backquater);
-                    DrawingCanvasView.setDraw(false);
-
-
-                }
-                else{
-                    backgroundBool = !backgroundBool;
-                    photoMid.setVisibility(View.INVISIBLE);
-
-                    // Find the root view
-                    View root = findViewById(R.id.drawing_canvas);
-                    root.setBackgroundColor(Color.WHITE);
-                    eraser.setVisibility(View.VISIBLE);
-                    button.setVisibility(View.VISIBLE);
-                    root.setVisibility(View.VISIBLE);
-                    DrawingCanvasView.setDraw(true);
-                    changeImage(newString);
-                }
+                toggleModelPreview();
             }
         });
 
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
-                alert.setTitle("Varmistus");
-                alert.setMessage("Haluatko varmasti tallentaa");
-                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        View drawingCanvas = findViewById(R.id.drawing_canvas);
-                        drawingCanvas.buildDrawingCache();
-
-                        Bitmap bitmap = Bitmap.createBitmap(
-                                drawingCanvas.getDrawingCache(),
-                                0,
-                                0,
-                                drawingCanvas.getWidth(),
-                                drawingCanvas.getHeight()
-                        );
-
-                       // analyzeImage(bitmap, bitmap);
-                       // saveBitmap(bitmap);
-                        //
-                        //String pixels = changeBitmap(bitmap);
-                       // post(pixels, newString);
-                        Intent intent = new Intent(DrawingCanvas.this, ResultCanvas.class);
-                        ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
-                        intent.putExtra("img", bs.toByteArray());
-                        intent.putExtra("photo", newString);
-                        startActivity(intent);
-
-                    }
-                });
-                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, just close
-                        // the dialog box and do nothing
-                        dialog.cancel();
-                    }
-                });
-                alert.show();
+                showSaveDialog();
 
             }
         });
 
-        eraser.setOnClickListener(new View.OnClickListener(){
-
+        penEraserToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v(TAG, "OnClick");
-                DrawingCanvasView.setEraser(erase);
-                eraser.setSelected(erase);
-                erase = !erase;
+                toggleEraser();
             }
-
         });
     }
 
-    public double analyzeImage(Bitmap drawing, Bitmap model) {
-        //DrawingAnalyzer analyzer = new CMAESDrawingAnalyzer(drawing, model);
-        DrawingAnalyzer analyzer = new DummyDrawingAnalyzer();
+    private void showSaveDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
+        alert.setTitle("Archive drawing");
+        alert.setMessage("Do you want to archive the drawing? The drawing is archived as an PNG image.");
 
-        Double diff = analyzer.getDiffInPercents(100);
-      //  Log.i(TAG, "diff: " + diff.toString() + " guess: " + analyzer.getGuess().toString());
-        return diff;
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                View dc = findViewById(R.id.drawing_canvas);
+                dc.buildDrawingCache();
+
+                Bitmap bitmap = Bitmap.createBitmap(
+                        dc.getDrawingCache(), 0, 0, dc.getWidth(), dc.getHeight()
+                );
+
+                Intent intent = new Intent(DrawingCanvas.this, ResultCanvas.class);
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                intent.putExtra("img", bs.toByteArray());
+                intent.putExtra("photo", modelImageSlug);
+
+                startActivity(intent);
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // if this button is clicked, just close
+                // the dialog box and do nothing
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+    }
+
+    private void toggleModelPreview() {
+        showModelPreview = !showModelPreview;
+        if (!showModelPreview) {
+            photoMid.setVisibility(View.VISIBLE);
+            // Find the root view
+            // Pimennys
+            View root = findViewById(R.id.drawing_canvas);
+            root.setBackgroundColor(Color.BLACK);
+            penEraserToggle.setVisibility(View.INVISIBLE);
+            button.setVisibility(View.INVISIBLE);
+            root.setVisibility(View.INVISIBLE);
+            photo.setImageResource(R.drawable.backquater);
+            DrawingCanvasView.setDraw(false);
+
+
+        }
+        else{
+            photoMid.setVisibility(View.INVISIBLE);
+
+            // Find the root view
+            View root = findViewById(R.id.drawing_canvas);
+            root.setBackgroundColor(Color.WHITE);
+            penEraserToggle.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
+            root.setVisibility(View.VISIBLE);
+            DrawingCanvasView.setDraw(true);
+            setModelImage(modelImageSlug);
+        }
+    }
+
+    public void toggleEraser() {
+        eraserIsActive = !eraserIsActive;
+        DrawingCanvasView.setEraser(eraserIsActive);
+        penEraserToggle.setSelected(eraserIsActive);
     }
 
     public  void  saveBitmap (Bitmap savePic)  {
@@ -188,6 +173,7 @@ public class DrawingCanvas extends Activity {
         }
 
     }
+
     //TODO: Liian raskas, pitää kehittää parempi tapa!
 
     private static String changeBitmap(Bitmap myBitmap){
@@ -204,40 +190,8 @@ public class DrawingCanvas extends Activity {
         }
         return pointString;
     }
-    // Miten tämä implementoidaan???
-    private void post (final String img, final String name){
 
-        String url = "https://drawing-app-algorithm.herokuapp.com/compare";
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.d("Response", response);
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.d("Error.Response", error.getMessage());
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put(img, name);
-
-                return params;
-            }
-        };
-      //  queue.add(postRequest);
-    }
-    private void changeImage(String newString){
+    private void setModelImage(String newString){
         final ImageView photo = (ImageView) findViewById(R.id.imageView);
         final ImageView photoMid = (ImageView) findViewById(R.id.imageView2);
         if (newString.equals( "stool")){

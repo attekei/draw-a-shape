@@ -38,7 +38,6 @@ public class DrawingCanvasView extends View {
     }
 
     protected void setupDrawing() {
-
         this.setDrawingCacheEnabled(true);
 
         drawPath = new Path();
@@ -50,11 +49,7 @@ public class DrawingCanvasView extends View {
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
 
-
-
-
         canvasPaint = new Paint(Paint.DITHER_FLAG);
-
     }
 
     @Override
@@ -117,13 +112,12 @@ public class DrawingCanvasView extends View {
         drawPath.lineTo(x, y);
     }
 
-    public static void setEraser(boolean isErase) {
-        Log.v(TAG, "Eraser method works");
-        erase = isErase;
-        if (erase) {
-         drawPaint.setColor(backgroundColor);
-         drawPaint.setStrokeWidth(15);
-        } else {drawPaint.setColor(paintColor);
+    public static void setEraser(boolean isEraser) {
+        if (isEraser) {
+            drawPaint.setColor(backgroundColor);
+            drawPaint.setStrokeWidth(50);
+        } else {
+            drawPaint.setColor(paintColor);
             drawPaint.setStrokeWidth(10);
         }
     }
