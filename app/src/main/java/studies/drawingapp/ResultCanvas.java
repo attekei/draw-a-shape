@@ -9,20 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
 
-import studies.drawingapp.mainmenu.MainMenu;
-
-/**
- * Created by labso_000 on 27.10.2014.
- */
 public class ResultCanvas extends Activity {
     private static final String TAG = "Result";
     Bundle extras;
@@ -40,7 +33,6 @@ public class ResultCanvas extends Activity {
                 alert.setMessage("Haluatko aloittaa alusta");
                 alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         Intent intent  = new Intent(ResultCanvas.this, MainMenuGraph.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -93,9 +85,6 @@ public class ResultCanvas extends Activity {
             frame.setBackground(d);
 
         }
-
-
-        //LayerDrawable layerDrawable = new LayerDrawable(layers);
 
         photo.setImageDrawable(layers[0]);
     }

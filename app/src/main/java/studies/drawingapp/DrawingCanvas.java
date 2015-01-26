@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -57,15 +56,12 @@ public class DrawingCanvas extends Activity {
                 toggleModelPreview();
             }
         });
-
-
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showSaveDialog();
 
             }
         });
-
         penEraserToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,63 +75,72 @@ public class DrawingCanvas extends Activity {
         alert.setTitle("Archive drawing");
         alert.setMessage("Do you want to archive the drawing? The drawing is archived as an PNG image.");
 
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                View dc = findViewById(R.id.drawing_canvas);
-                dc.buildDrawingCache();
-
-                Bitmap bitmap = Bitmap.createBitmap(
-                        dc.getDrawingCache(), 0, 0, dc.getWidth(), dc.getHeight()
-                );
-
-                Intent intent = new Intent(DrawingCanvas.this, ResultCanvas.class);
-                ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
-                intent.putExtra("img", bs.toByteArray());
-                intent.putExtra("photo", modelImageSlug);
-
-                startActivity(intent);
+                Bitmap bitmap = getDrawingBitmap();
+                saveBitmap(bitmap);
+                showResults(bitmap);
             }
         });
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // if this button is clicked, just close
-                // the dialog box and do nothing
-                dialog.cancel();
+                Bitmap bitmap = getDrawingBitmap();
+                showResults(bitmap);
             }
         });
 
         alert.show();
     }
 
+    private Bitmap getDrawingBitmap() {
+        View dc = findViewById(R.id.drawing_canvas);
+        dc.buildDrawingCache();
+
+        return Bitmap.createBitmap(
+                dc.getDrawingCache(), 0, 0, dc.getWidth(), dc.getHeight()
+        );
+    }
+
+    private void showResults(Bitmap drawingBitmap) {
+        Intent showResultsIntent = new Intent(DrawingCanvas.this, ResultCanvas.class);
+        // TODO downscale image
+        //showResultsIntent.putExtra("drawing_bitmap", drawingBitmap);
+        showResultsIntent.putExtra("drawing_slug", modelImageSlug);
+
+        startActivity(showResultsIntent);
+    }
+
     private void toggleModelPreview() {
         showModelPreview = !showModelPreview;
-        if (!showModelPreview) {
-            photoMid.setVisibility(View.VISIBLE);
-            // Find the root view
-            // Pimennys
-            View root = findViewById(R.id.drawing_canvas);
-            root.setBackgroundColor(Color.BLACK);
-            penEraserToggle.setVisibility(View.INVISIBLE);
-            button.setVisibility(View.INVISIBLE);
-            root.setVisibility(View.INVISIBLE);
-            photo.setImageResource(R.drawable.backquater);
-            DrawingCanvasView.setDraw(false);
-
-
+        if (showModelPreview) {
+            showModelPreview();
         }
         else{
-            photoMid.setVisibility(View.INVISIBLE);
-
-            // Find the root view
-            View root = findViewById(R.id.drawing_canvas);
-            root.setBackgroundColor(Color.WHITE);
-            penEraserToggle.setVisibility(View.VISIBLE);
-            button.setVisibility(View.VISIBLE);
-            root.setVisibility(View.VISIBLE);
-            DrawingCanvasView.setDraw(true);
-            setModelImage(modelImageSlug);
+            hideModelPreview();
         }
+    }
+
+    private void hideModelPreview() {
+        photoMid.setVisibility(View.INVISIBLE);
+        View root = findViewById(R.id.drawing_canvas);
+        root.setBackgroundColor(Color.WHITE);
+        penEraserToggle.setVisibility(View.VISIBLE);
+        button.setVisibility(View.VISIBLE);
+        root.setVisibility(View.VISIBLE);
+        DrawingCanvasView.setDraw(true);
+        setModelImage(modelImageSlug);
+    }
+
+    private void showModelPreview() {
+        photoMid.setVisibility(View.VISIBLE);
+        View root = findViewById(R.id.drawing_canvas);
+        root.setBackgroundColor(Color.BLACK);
+        penEraserToggle.setVisibility(View.INVISIBLE);
+        button.setVisibility(View.INVISIBLE);
+        root.setVisibility(View.INVISIBLE);
+        photo.setImageResource(R.drawable.backquater);
+        DrawingCanvasView.setDraw(false);
     }
 
     public void toggleEraser() {
@@ -158,7 +163,7 @@ public class DrawingCanvas extends Activity {
                     boolean directoryCreated =  path.mkdirs();
                     if (directoryCreated) Log.i(TAG, "Image directory created.");
                 }
-                // output image to file
+
                 FileOutputStream fos = new FileOutputStream(filePath);
                 savePic.compress(Bitmap.CompressFormat.PNG, 90, fos);
                 fos.close();
@@ -172,23 +177,6 @@ public class DrawingCanvas extends Activity {
             Log.v(TAG, "savePicture image parsing error");
         }
 
-    }
-
-    //TODO: Liian raskas, pitää kehittää parempi tapa!
-
-    private static String changeBitmap(Bitmap myBitmap){
-        String pointString = "";
-        int width = myBitmap.getWidth();
-        for (int x = 0; x < myBitmap.getWidth(); x++) {
-            for (int y = 0; y < myBitmap.getHeight(); y++) {
-
-                if (myBitmap.getPixel(x, y) == Color.BLACK) {
-
-                    pointString += " " + x + " " + y;
-                }
-            }
-        }
-        return pointString;
     }
 
     private void setModelImage(String newString){

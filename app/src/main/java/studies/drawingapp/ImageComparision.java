@@ -15,6 +15,6 @@ import studies.algorithms.CMAESGuess;
 /**
  * Created by atte on 26.1.15.
  */
-public class ImageComparisionAPI {
+public class ImageComparision {
     // RequestQueue queue = Volley.newRequestQueue(this);  // this = context
 }
