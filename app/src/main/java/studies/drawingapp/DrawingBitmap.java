@@ -1,6 +1,9 @@
 package studies.drawingapp;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 
@@ -20,6 +23,12 @@ public class DrawingBitmap {
      */
     public static final int PIXEL_COUNT_FOR_SAVE  = 1000 * 1000;
 
+    /**
+     * Recommended pixel count for image comparision
+     * (for resizeImage before getBlackPixelListString)
+     */
+    public static final int PIXEL_COUNT_FOR_COMP  = 10 * 1000;
+
     DrawingBitmap(Bitmap originalBitmap) {
         bitmap = originalBitmap;
     }
@@ -27,6 +36,19 @@ public class DrawingBitmap {
     public static DrawingBitmap fromDrawingCache(Bitmap drawingCache, Integer width, Integer height) {
         Bitmap fixedBitmap = Bitmap.createBitmap(drawingCache, 0, 0, width, height);
         return new DrawingBitmap(fixedBitmap);
+    }
+
+    public static DrawingBitmap fromDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return new DrawingBitmap(((BitmapDrawable)drawable).getBitmap());
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return new DrawingBitmap(bitmap);
     }
 
     public Bitmap getBitmap() {
@@ -41,7 +63,7 @@ public class DrawingBitmap {
         int width = bitmap.getWidth(), height = bitmap.getHeight();
 
         int[] pixels = new int[width * height];
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
         int minX = getMinNonTransparentX(pixels, width, height);
         if (minX == -1) return null; // No any non-transparent pixel found
@@ -145,5 +167,23 @@ public class DrawingBitmap {
         return new DrawingBitmap(
                 Bitmap.createScaledBitmap(bitmap, (int)(scale * bitmap.getWidth()), (int)(scale * bitmap.getHeight()), true)
         );
+    }
+
+    public String getBlackPixelListString() {
+        int width = bitmap.getWidth(), height = bitmap.getHeight();
+
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+
+        String pixelString = "";
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (pixels[ y * width + x] != 0) {
+                    pixelString += " " + x + " " + y;
+                }
+            }
+        }
+
+        return pixelString;
     }
 }

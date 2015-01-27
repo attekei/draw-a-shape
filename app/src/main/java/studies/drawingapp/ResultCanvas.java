@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,6 +23,8 @@ public class ResultCanvas extends Activity {
     Bundle extras;
     String modelSlug;
     private Button restart;
+    private Drawable modelDrawable;
+    private Drawable drawingDrawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +32,18 @@ public class ResultCanvas extends Activity {
         setContentView(R.layout.activity_result_canvas);
 
         restart = (Button) findViewById(R.id.restart);
+        modelDrawable = getModelDrawable();
+        drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
 
         showModelAndDrawing();
         bindEvents();
+        runComparision();
+    }
+
+    private void runComparision() {
+        DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
+        DrawingBitmap downscaledBitmap = drawingBitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
+        String pixels = downscaledBitmap.getBlackPixelListString();
     }
 
     private void bindEvents() {
@@ -69,9 +81,6 @@ public class ResultCanvas extends Activity {
     private void showModelAndDrawing(){
         final ImageView drawingView = (ImageView) findViewById(R.id.drawingView);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-
-        Drawable modelDrawable = getModelDrawable();
-        Drawable drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
 
         LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{drawingDrawable, modelDrawable});
         drawingView.setImageDrawable(layerDrawable);
