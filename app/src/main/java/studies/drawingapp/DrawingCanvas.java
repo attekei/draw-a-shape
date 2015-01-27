@@ -1,6 +1,5 @@
 package studies.drawingapp;
 
-
 import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
 
 public class DrawingCanvas extends Activity {
     Bundle extras;
@@ -44,7 +42,7 @@ public class DrawingCanvas extends Activity {
         penEraserToggle = (Button) findViewById(R.id.penEraserToggle);
 
         extras = getIntent().getExtras();
-        modelImageSlug = extras.getString("photo");
+        modelImageSlug = extras.getString("model_slug");
         setModelImage(modelImageSlug);
 
         bindEvents();
@@ -77,36 +75,37 @@ public class DrawingCanvas extends Activity {
 
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Bitmap bitmap = getDrawingBitmap();
-                saveBitmap(bitmap);
-                showResults(bitmap);
+                DrawingBitmap bitmap = getDrawingBitmap();
+                String bitmapPath = bitmap.saveAsArchivedPNG("testuser");
+                showResults(bitmapPath);
             }
         });
 
         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Bitmap bitmap = getDrawingBitmap();
-                showResults(bitmap);
+                DrawingBitmap bitmap = getDrawingBitmap();
+                String bitmapPath = bitmap.saveAsTemporaryPNG();
+                showResults(bitmapPath);
             }
         });
 
         alert.show();
     }
 
-    private Bitmap getDrawingBitmap() {
+    private DrawingBitmap getDrawingBitmap() {
         View dc = findViewById(R.id.drawing_canvas);
         dc.buildDrawingCache();
 
-        return Bitmap.createBitmap(
-                dc.getDrawingCache(), 0, 0, dc.getWidth(), dc.getHeight()
-        );
+        return DrawingBitmap.fromDrawingCache(dc.getDrawingCache(), dc.getWidth(), dc.getHeight())
+                .removeTransparentMargins()
+                .resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_SAVE, false);
     }
 
-    private void showResults(Bitmap drawingBitmap) {
+    private void showResults(String drawingBitmapPath) {
         Intent showResultsIntent = new Intent(DrawingCanvas.this, ResultCanvas.class);
-        // TODO downscale image
-        //showResultsIntent.putExtra("drawing_bitmap", drawingBitmap);
-        showResultsIntent.putExtra("drawing_slug", modelImageSlug);
+
+        showResultsIntent.putExtra("drawing_path", drawingBitmapPath);
+        showResultsIntent.putExtra("model_slug", modelImageSlug);
 
         startActivity(showResultsIntent);
     }
@@ -176,23 +175,14 @@ public class DrawingCanvas extends Activity {
         } else {
             Log.v(TAG, "savePicture image parsing error");
         }
-
     }
 
-    private void setModelImage(String newString){
+    private void setModelImage(String modelSlug){
         final ImageView photo = (ImageView) findViewById(R.id.imageView);
         final ImageView photoMid = (ImageView) findViewById(R.id.imageView2);
-        if (newString.equals( "stool")){
-            photo.setImageResource(R.drawable.stoolquater);
-            photoMid.setImageResource(R.drawable.stool);
-        }
-        else if  (newString.equals("apple")){
-            photo.setImageResource(R.drawable.applequater);
-            photoMid.setImageResource(R.drawable.apple);
-        }
-        if ( (newString.equals("bear"))){
-            photo.setImageResource(R.drawable.bearquater);
-            photoMid.setImageResource(R.drawable.bear);
-        }
+
+        ModelImageProvider modelProvider = new ModelImageProvider(this);
+        photo.setImageDrawable(modelProvider.getQuarterCircleDrawable(modelSlug));
+        photoMid.setImageDrawable(modelProvider.getDrawable(modelSlug));
     }
 }

@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="370dp"
         android:layout_height="370dp"
-        android:id="@+id/imageView"
+        android:id="@+id/drawingView"
         android:layout_gravity="center" />
 
     <Button

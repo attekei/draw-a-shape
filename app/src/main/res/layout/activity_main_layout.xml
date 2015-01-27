@@ -10,7 +10,7 @@
         android:layout_height="214dp"
         android:id="@+id/imageButton"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/apple"
+        android:src="@drawable/model_image_apple"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_marginLeft="50dp"

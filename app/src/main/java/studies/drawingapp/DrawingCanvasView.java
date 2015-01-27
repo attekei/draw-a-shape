@@ -17,10 +17,10 @@ import android.view.View;
 
 
 public class DrawingCanvasView extends View {
+    private static boolean isEraser = false;
     private Path drawPath;
     private static final String TAG = "Piirto";
     private Paint canvasPaint;
-    private Paint eraserPaint;
     private int strokeWidth = 10;
     private static int paintColor = Color.BLACK;
     private static int backgroundColor = 0xFFFFFFFF;
@@ -29,7 +29,6 @@ public class DrawingCanvasView extends View {
     private Bitmap canvasBitmap;
     private static Paint drawPaint;
     private static boolean draw = true;
-
 
     public DrawingCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -64,9 +63,7 @@ public class DrawingCanvasView extends View {
 
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
-            canvas.drawPath(drawPath, drawPaint);
-
-
+        if (!isEraser) canvas.drawPath(drawPath, drawPaint);
     }
 
     @Override
@@ -99,6 +96,7 @@ public class DrawingCanvasView extends View {
     }
 
     private void setPathStartLocation(float x, float y) {
+        if (isEraser) { drawPathAndStartNewPath(x, y); return; }
         drawPath.moveTo(x, y);
     }
 
@@ -109,14 +107,18 @@ public class DrawingCanvasView extends View {
     }
 
     private void continuePathToLocation(float x, float y) {
+        if (isEraser) { drawPathAndStartNewPath(x, y); return; }
         drawPath.lineTo(x, y);
     }
 
-    public static void setEraser(boolean isEraser) {
+    public static void setEraser(boolean _isEraser) {
+        isEraser = _isEraser;
         if (isEraser) {
-            drawPaint.setColor(backgroundColor);
-            drawPaint.setStrokeWidth(50);
+            drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+            drawPaint.setColor(Color.TRANSPARENT);
+            drawPaint.setStrokeWidth(80);
         } else {
+            drawPaint.setXfermode(null);
             drawPaint.setColor(paintColor);
             drawPaint.setStrokeWidth(10);
         }

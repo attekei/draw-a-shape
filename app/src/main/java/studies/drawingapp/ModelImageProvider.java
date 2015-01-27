@@ -20,16 +20,16 @@ public class ModelImageProvider {
 
     public Drawable getDrawable(String imageSlug) {
         Resources res = context.getResources();
-        int resID = res.getIdentifier("model-image-" + imageSlug, "drawable", context.getPackageName());
-        return res.getDrawable(resID);
+        int resID = res.getIdentifier("model_image_" + imageSlug, "drawable", context.getPackageName());
+        return resID != 0 ? res.getDrawable(resID) : null;
     }
 
     /**
-     * Returns the quater circleimage used in UI corners
+     * Returns the quarter circle of image used in UI corners
      */
-    public Drawable getQuaterCircleDrawable(String imageSlug) {
+    public Drawable getQuarterCircleDrawable(String imageSlug) {
         Resources res = context.getResources();
-        int resID = res.getIdentifier("model-image-quater-" + imageSlug, "drawable", context.getPackageName());
+        int resID = res.getIdentifier("model_image_quater_" + imageSlug, "drawable", context.getPackageName());
         return res.getDrawable(resID);
     }
 

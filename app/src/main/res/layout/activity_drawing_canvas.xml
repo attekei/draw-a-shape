@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_overlay"
+    android:background="@color/white_overlay"
     tools:context="studies.drawingapp.DrawingCanvas"
 
     android:focusable="false">
@@ -11,7 +11,7 @@
         android:id="@+id/drawing_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFFFF"
+        android:background="#00000000"
         />
 
     <ImageView
@@ -24,7 +24,7 @@
         android:adjustViewBounds="true"
         android:minHeight="100dp"
         android:minWidth="100dp"
-        android:src="@drawable/stoolquater"/>
+        android:src="@drawable/model_image_quater_stool"/>
 
     <Button
         android:layout_width="180dp"
