@@ -2,12 +2,9 @@ package studies.drawingapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -16,6 +13,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
 
 
 public class ResultCanvas extends Activity {
@@ -31,8 +34,12 @@ public class ResultCanvas extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_canvas);
 
+        extras = getIntent().getExtras();
+        modelSlug = extras.getString("model_slug");
+
         restart = (Button) findViewById(R.id.restart);
         modelDrawable = getModelDrawable();
+
         drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
 
         showModelAndDrawing();
@@ -41,9 +48,43 @@ public class ResultCanvas extends Activity {
     }
 
     private void runComparision() {
+        //Azk för tö user äpproximätiön hier
+
         DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
         DrawingBitmap downscaledBitmap = drawingBitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
-        String pixels = downscaledBitmap.getBlackPixelListString();
+        ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions();
+
+        ImageComparison comparison = new ImageComparison(this, modelSlug);
+        final Context context = this;
+
+        comparison.run(pixels, new Response.Listener<ImageComparisonResult>() {
+            @Override
+            public void onResponse(ImageComparisonResult response) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                String percents = MessageFormat.format("{0,number,#.###}", response.systemEstimate * 100);
+                alert.setMessage( "Match: " + percents + " %\nSquare error: " + response.squareError);
+                alert.setNeutralButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alert.show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                alert.setMessage( "Request failed");
+                alert.setNeutralButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alert.show();
+            }
+        });
     }
 
     private void bindEvents() {
@@ -87,9 +128,6 @@ public class ResultCanvas extends Activity {
     }
 
     private Drawable getModelDrawable() {
-        extras = getIntent().getExtras();
-        modelSlug = extras.getString("model_slug");
-
         ModelImageProvider modelProvider = new ModelImageProvider(this);
         return modelProvider.getDrawable(modelSlug);
     }

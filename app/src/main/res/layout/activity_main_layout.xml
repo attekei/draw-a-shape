@@ -21,7 +21,7 @@
         android:layout_height="250dp"
         android:id="@+id/imageButton2"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/bear"
+        android:src="@drawable/model_image_bear"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         
@@ -33,7 +33,7 @@
         android:layout_height="214dp"
         android:id="@+id/imageButton3"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/stool"
+        android:src="@drawable/model_image_stool"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_marginLeft="150dp"

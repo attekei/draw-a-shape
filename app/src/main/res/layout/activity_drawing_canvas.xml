@@ -54,7 +54,6 @@
         android:layout_height="446dp"
         android:id="@+id/imageView2"
         android:layout_gravity="center"
-        android:src="@drawable/stool"
         android:adjustViewBounds="true"
         android:visibility="invisible" />
 

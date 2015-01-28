@@ -10,6 +10,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -169,21 +170,23 @@ public class DrawingBitmap {
         );
     }
 
-    public String getBlackPixelListString() {
+    public ArrayList<int[]> getBlackPixelPositions() {
         int width = bitmap.getWidth(), height = bitmap.getHeight();
 
         int[] pixels = new int[width * height];
+        ArrayList<int[]> blackPixels = new ArrayList<int[]>();
+
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
         String pixelString = "";
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (pixels[ y * width + x] != 0) {
-                    pixelString += " " + x + " " + y;
+                    blackPixels.add(new int[]{x, y});
                 }
             }
         }
 
-        return pixelString;
+        return blackPixels;
     }
 }
