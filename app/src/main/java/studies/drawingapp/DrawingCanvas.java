@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 
@@ -28,8 +28,8 @@ public class DrawingCanvas extends Activity {
 
     private ImageView photo;
     private ImageView photoMid;
-    private Button button;
-    private Button penEraserToggle;
+    private ImageView proceedButton;
+    private ImageButton penEraserToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +38,8 @@ public class DrawingCanvas extends Activity {
         setContentView(R.layout.activity_drawing_canvas);
         photo = (ImageView) findViewById(R.id.imageView);
         photoMid = (ImageView) findViewById(R.id.imageView2);
-        button = (Button) findViewById(R.id.saveButton);
-        penEraserToggle = (Button) findViewById(R.id.penEraserToggle);
-
+        proceedButton = (ImageView) findViewById(R.id.saveButton);
+        penEraserToggle = (ImageButton) findViewById(R.id.penEraserToggle);
         extras = getIntent().getExtras();
         modelImageSlug = extras.getString("model_slug");
         setModelImage(modelImageSlug);
@@ -54,9 +53,9 @@ public class DrawingCanvas extends Activity {
                 toggleModelPreview();
             }
         });
-        button.setOnClickListener(new View.OnClickListener() {
+        proceedButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                showSaveDialog();
+                showArchiveDialog();
 
             }
         });
@@ -68,10 +67,10 @@ public class DrawingCanvas extends Activity {
         });
     }
 
-    private void showSaveDialog() {
+    private void showArchiveDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
         alert.setTitle("Archive drawing");
-        alert.setMessage("Do you want to archive the drawing? The drawing is archived as an PNG image.");
+        alert.setMessage("Do you want to archive the drawing for later use?");
 
         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -123,9 +122,8 @@ public class DrawingCanvas extends Activity {
     private void hideModelPreview() {
         photoMid.setVisibility(View.INVISIBLE);
         View root = findViewById(R.id.drawing_canvas);
-        root.setBackgroundColor(Color.WHITE);
         penEraserToggle.setVisibility(View.VISIBLE);
-        button.setVisibility(View.VISIBLE);
+        proceedButton.setVisibility(View.VISIBLE);
         root.setVisibility(View.VISIBLE);
         DrawingCanvasView.setDraw(true);
         setModelImage(modelImageSlug);
@@ -134,9 +132,8 @@ public class DrawingCanvas extends Activity {
     private void showModelPreview() {
         photoMid.setVisibility(View.VISIBLE);
         View root = findViewById(R.id.drawing_canvas);
-        root.setBackgroundColor(Color.BLACK);
         penEraserToggle.setVisibility(View.INVISIBLE);
-        button.setVisibility(View.INVISIBLE);
+        proceedButton.setVisibility(View.INVISIBLE);
         root.setVisibility(View.INVISIBLE);
         photo.setImageResource(R.drawable.backquater);
         DrawingCanvasView.setDraw(false);
@@ -146,35 +143,6 @@ public class DrawingCanvas extends Activity {
         eraserIsActive = !eraserIsActive;
         DrawingCanvasView.setEraser(eraserIsActive);
         penEraserToggle.setSelected(eraserIsActive);
-    }
-
-    public  void  saveBitmap (Bitmap savePic)  {
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/drawing-app/" + "testikuva.png";
-
-        File file = new File(filePath);
-        File path = new File(file.getParent());
-
-        if (savePic != null) {
-            try {
-                // build directory
-                if (file.getParent() != null && !path.isDirectory()) {
-                    boolean directoryCreated =  path.mkdirs();
-                    if (directoryCreated) Log.i(TAG, "Image directory created.");
-                }
-
-                FileOutputStream fos = new FileOutputStream(filePath);
-                savePic.compress(Bitmap.CompressFormat.PNG, 90, fos);
-                fos.close();
-                Log.i(TAG, "Saving the image was successful." + filePath);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            Log.v(TAG, "savePicture image parsing error");
-        }
     }
 
     private void setModelImage(String modelSlug){

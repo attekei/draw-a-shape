@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Piirto-ohjelma, proto</string>
+    <string name="app_name">Drawing game</string>
     <string name="hello_world">Moikka paras!</string>
     <string name="action_settings">Asetukset</string>
     <string name="title_activity_drawing_canvas">DrawingCanvas</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="Tallenna">Tallenna</string>
+    <string name="game_title">Draw a shape</string>
 
 </resources>

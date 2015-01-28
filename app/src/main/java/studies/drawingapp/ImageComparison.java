@@ -1,6 +1,9 @@
 package studies.drawingapp;
 
 import android.content.Context;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 
 import com.android.volley.Response.Listener;
@@ -14,6 +17,8 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.android.volley.Request.Method;
 
 public class ImageComparison {
     private static final String TAG = "ImageComparison";
@@ -29,7 +34,7 @@ public class ImageComparison {
                 .create();
     }
 
-    public void run(ArrayList<int[]> pixels, final Listener<ImageComparisonResult> responseListener,
+    public void run(ArrayList<int[]> pixels, final Listener<ImageComparisonResult> resultListener,
                                       final ErrorListener errorListener) {
         Map<String,String> params = new HashMap<String, String>();
 
@@ -41,10 +46,10 @@ public class ImageComparison {
         params.put("image", modelSlug);
         params.put("points", pointsBuilder.toString());
 
-        APIRequest request = new APIRequest("compare", params, new Listener<String>() {
+        APIRequest request = new APIRequest(Method.POST, "compare", params, new Listener<String>() {
             @Override
             public void onResponse(String json) {
-                    responseListener.onResponse(gson.fromJson(json, ImageComparisonResult.class));
+                    resultListener.onResponse(gson.fromJson(json, ImageComparisonResult.class));
             }
         }, errorListener);
 
@@ -52,4 +57,15 @@ public class ImageComparison {
     }
 
 
+    public void addUserEstimate(Double fraction, Double squareError, final Listener<String> successListener,
+                                final ErrorListener errorListener) {
+        Map<String,String> params = new HashMap<String, String>();
+        params.put("image", modelSlug);
+        params.put("user_estimate", fraction.toString());
+        params.put("square_error", squareError.toString());
+
+        APIRequest request = new APIRequest(Method.POST, "user-estimates/add", params, successListener, errorListener);
+
+        queue.add(request);
+    }
 }

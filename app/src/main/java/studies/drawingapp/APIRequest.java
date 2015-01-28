@@ -3,6 +3,8 @@ package studies.drawingapp;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.json.JSONException;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -16,13 +18,19 @@ public class APIRequest extends Request<String> {
     private Listener<String> listener;
     private Map<String, String> params;
 
-    public APIRequest(String path, Map<String, String> params,
+    public APIRequest(int method, String path, Map<String, String> params,
                       Listener<String> responseListener, ErrorListener errorListener) {
-        super(Method.POST, "http://drawingapp.ngrok.com/" + path, errorListener);
+        super(method, "http://drawing-app-algorithm.herokuapp.com/" + path, errorListener);
 
         this.listener = responseListener;
         this.params = params;
+
+        this.setRetryPolicy(new DefaultRetryPolicy(
+                25000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
+
 
     protected Map<String, String> getParams()
             throws com.android.volley.AuthFailureError {
@@ -45,6 +53,9 @@ public class APIRequest extends Request<String> {
     @Override
     protected void deliverResponse(String response) {
         // TODO Auto-generated method stub
-        listener.onResponse(response);
+        if (listener != null) {
+            listener.onResponse(response);
+        }
+
     }
 }

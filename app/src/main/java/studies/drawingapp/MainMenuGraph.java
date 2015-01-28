@@ -2,7 +2,10 @@ package studies.drawingapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -46,5 +49,12 @@ public class MainMenuGraph extends Activity {
                 startActivity(intent);
             }
         });
+
+
+        MotionEventEffects effects = new MotionEventEffects();
+        effects.bindImageViewMotionEffects(imgOne);
+        effects.bindImageViewMotionEffects(imgTwo);
+        effects.bindImageViewMotionEffects(imgThree);
+
     }
 }

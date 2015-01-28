@@ -2,9 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_overlay"
+    android:background="@drawable/canvasbg_continuous"
     tools:context="studies.drawingapp.DrawingCanvas"
-
     android:focusable="false">
 
     <studies.drawingapp.DrawingCanvasView
@@ -26,7 +25,7 @@
         android:minWidth="100dp"
         android:src="@drawable/model_image_quater_stool"/>
 
-    <Button
+    <ImageButton
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:id="@+id/saveButton"
@@ -36,8 +35,7 @@
         android:paddingRight="50dp"
         android:paddingTop="50dp" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <ImageButton
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:id="@+id/penEraserToggle"

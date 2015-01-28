@@ -24,16 +24,14 @@
             </intent-filter>
         </activity>
         <activity
-        android:name=".DrawingCanvas"
-        android:configChanges="orientation|keyboardHidden|screenSize"
-        android:label="@string/title_activity_drawing_canvas"
-        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        android:screenOrientation="landscape" >
-    </activity>
+            android:name=".DrawingCanvas"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_drawing_canvas"
+            android:screenOrientation="landscape" >
+        </activity>
         <activity
             android:name=".ResultCanvas"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="landscape" >
         </activity>
     </application>

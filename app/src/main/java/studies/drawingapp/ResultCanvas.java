@@ -8,11 +8,17 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,9 +31,12 @@ public class ResultCanvas extends Activity {
     private static final String TAG = "Result";
     Bundle extras;
     String modelSlug;
-    private Button restart;
+    private ImageButton restart;
     private Drawable modelDrawable;
     private Drawable drawingDrawable;
+    private ImageComparisonResult comparisonResult = null;
+    private ImageComparison comparison;
+    private TextView statusText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +46,9 @@ public class ResultCanvas extends Activity {
         extras = getIntent().getExtras();
         modelSlug = extras.getString("model_slug");
 
-        restart = (Button) findViewById(R.id.restart);
+        restart = (ImageButton) findViewById(R.id.restart);
         modelDrawable = getModelDrawable();
+        statusText = (TextView) findViewById(R.id.statusText);
 
         drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
 
@@ -48,43 +58,83 @@ public class ResultCanvas extends Activity {
     }
 
     private void runComparision() {
-        //Azk för tö user äpproximätiön hier
 
         DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
         DrawingBitmap downscaledBitmap = drawingBitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
         ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions();
 
-        ImageComparison comparison = new ImageComparison(this, modelSlug);
+        comparison = new ImageComparison(this, modelSlug);
         final Context context = this;
 
         comparison.run(pixels, new Response.Listener<ImageComparisonResult>() {
             @Override
-            public void onResponse(ImageComparisonResult response) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                String percents = MessageFormat.format("{0,number,#.###}", response.systemEstimate * 100);
-                alert.setMessage( "Match: " + percents + " %\nSquare error: " + response.squareError);
-                alert.setNeutralButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alert.show();
+            public void onResponse(ImageComparisonResult result) {
+                comparisonResult = result;
+                askEstimateFromUser();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setMessage( "Request failed");
-                alert.setNeutralButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alert.show();
+                error.printStackTrace();
+                statusText.setText("Calculation failed, probably API problem :(");
             }
         });
+    }
+
+    private void showErrorDialog(String message, Context context) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setMessage(message);
+        alert.setNeutralButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alert.show();
+    }
+
+    private void askEstimateFromUser() {
+        statusText.setText("             Waiting user input...");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter your estimate of the match in percents");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Double fraction = Double.parseDouble(input.getText().toString()) / 100;
+
+                // Currently only fire and forget the new estimate
+                comparison.addUserEstimate(fraction, comparisonResult.squareError, null, null);
+
+                showResults();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                showResults();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+        wmlp.gravity = Gravity.TOP | Gravity.LEFT;
+        wmlp.x = 50;   //x position
+        wmlp.y = 50;   //y position
+
+        dialog.show();
+    }
+
+    private void showResults() {
+        String percents = MessageFormat.format("{0,number,#.###}", comparisonResult.systemEstimate * 100);
+        statusText.setText("Match: " + percents + " %");
     }
 
     private void bindEvents() {
@@ -96,25 +146,12 @@ public class ResultCanvas extends Activity {
     }
 
     private void requestRestartWithDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Uudelleenaloitus");
-        alert.setMessage("Haluatko aloittaa alusta?");
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                showMainMenu();
-            }
-        });
-
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        alert.show();
+        showMainMenu();
     }
 
     private void showMainMenu() {
         Intent intent = new Intent(this, MainMenuGraph.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

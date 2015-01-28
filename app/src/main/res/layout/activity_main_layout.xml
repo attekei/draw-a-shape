@@ -1,43 +1,103 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/newgame"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:background="@android:color/white"
+    android:weightSum="1">
 
-    <ImageView
-        android:layout_width="293dp"
-        android:layout_height="214dp"
-        android:id="@+id/imageButton"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/model_image_apple"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_marginLeft="50dp"
-        android:clickable="true" />
+    <!--android:background="@color/white_overlay"-->
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="250dp"
-        android:id="@+id/imageButton2"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/model_image_bear"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        
-        android:layout_marginLeft="150dp"
-        android:clickable="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/game_title"
+        android:id="@+id/textView"
+        android:focusableInTouchMode="true"
+        android:textSize="60dp"
+        android:textColor="#2500FF"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal"
+        android:textStyle="bold"
+        android:paddingTop="20dp" />
 
-    <ImageView
-        android:layout_width="293dp"
-        android:layout_height="214dp"
-        android:id="@+id/imageButton3"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/model_image_stool"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_marginLeft="150dp"
-        android:layout_marginRight="50dp"
-        android:clickable="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Choose the shape to draw "
+        android:id="@+id/textView2"
+        android:focusableInTouchMode="true"
+        android:textSize="40dp"
+        android:textColor="#2500FF"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="25dp"
+        android:layout_weight="0.21"
+        android:paddingBottom="50dp" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+
+        android:baselineAligned="false">
+
+        <ImageButton
+            android:layout_width="293dp"
+            android:layout_height="214dp"
+            android:id="@+id/imageButton"
+            android:src="@drawable/model_image_apple"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:layout_width="300dp"
+            android:layout_height="224dp"
+            android:id="@+id/imageButton2"
+            android:src="@drawable/model_image_bear"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+
+            android:clickable="true"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:layout_width="293dp"
+            android:layout_height="214dp"
+            android:id="@+id/imageButton3"
+            android:src="@drawable/model_image_stool"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Game prototype made by Atte Keinänen and Jooel Friman "
+        android:id="@+id/textView3"
+        android:focusableInTouchMode="true"
+        android:textSize="40dp"
+        android:textColor="#2500FF"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="25dp"
+        android:layout_weight="0.21"
+        android:paddingBottom="20dp" />
 
 </LinearLayout>
