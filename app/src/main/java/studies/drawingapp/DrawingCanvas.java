@@ -4,18 +4,12 @@ import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 public class DrawingCanvas extends Activity {
     Bundle extras;
@@ -55,7 +49,7 @@ public class DrawingCanvas extends Activity {
         });
         proceedButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                showArchiveDialog();
+                archiveAndShowProceed();
 
             }
         });
@@ -67,28 +61,22 @@ public class DrawingCanvas extends Activity {
         });
     }
 
-    private void showArchiveDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(DrawingCanvas.this);
-        alert.setTitle("Archive drawing");
-        alert.setMessage("Do you want to archive the drawing for later use?");
+    private void archiveAndShowProceed() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean archiveDrawings = preferences.getBoolean("archive_drawings", false);
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                DrawingBitmap bitmap = getDrawingBitmap();
-                String bitmapPath = bitmap.saveAsArchivedPNG("testuser");
-                showResults(bitmapPath);
-            }
-        });
+        DrawingBitmap bitmap = getDrawingBitmap();
 
-        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                DrawingBitmap bitmap = getDrawingBitmap();
-                String bitmapPath = bitmap.saveAsTemporaryPNG();
-                showResults(bitmapPath);
-            }
-        });
+        String bitmapPath;
+        if (archiveDrawings) {
+            String playerFullName = preferences.getString("player_name", "no_name_defined");
+            String playerUserName = playerFullName.replaceAll(" ", "_").toLowerCase();
+            bitmapPath = bitmap.saveAsArchivedPNG(playerUserName);
+        } else {
+            bitmapPath = bitmap.saveAsTemporaryPNG();
+        }
 
-        alert.show();
+        showResults(bitmapPath);
     }
 
     private DrawingBitmap getDrawingBitmap() {

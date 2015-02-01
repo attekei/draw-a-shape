@@ -9,5 +9,10 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="Tallenna">Tallenna</string>
     <string name="game_title">Draw a shape</string>
+    <string name="title_activity_user_estimate_canvas">UserEstimateCanvas</string>
+    <string name="collect_user_estimates">Collect user estimates</string>
+    <string name="archive_drawings">Archive drawings</string>
+    <string name="player_name">Player name</string>
+    <string name="save">Save</string>
 
 </resources>
