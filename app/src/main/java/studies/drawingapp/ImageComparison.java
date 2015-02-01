@@ -34,6 +34,13 @@ public class ImageComparison {
                 .create();
     }
 
+    public void run(DrawingBitmap bitmap, final Listener<ImageComparisonResult> resultListener,
+                    final ErrorListener errorListener) {
+        DrawingBitmap downscaledBitmap = bitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
+        ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions();
+        run(pixels, resultListener, errorListener);
+    }
+
     public void run(ArrayList<int[]> pixels, final Listener<ImageComparisonResult> resultListener,
                                       final ErrorListener errorListener) {
         Map<String,String> params = new HashMap<String, String>();

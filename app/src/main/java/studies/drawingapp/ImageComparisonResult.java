@@ -1,6 +1,8 @@
 package studies.drawingapp;
 
-public class ImageComparisonResult {
+import java.io.Serializable;
+
+public class ImageComparisonResult implements Serializable {
     public final double squareError;
     public final double systemEstimate;
     public final double usedDiffConstant;

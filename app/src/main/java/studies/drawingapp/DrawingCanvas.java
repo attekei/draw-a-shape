@@ -1,8 +1,6 @@
 package studies.drawingapp;
 
-import android.app.AlertDialog;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,7 +47,7 @@ public class DrawingCanvas extends Activity {
         });
         proceedButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                archiveAndShowProceed();
+                archiveAndProceed();
 
             }
         });
@@ -61,7 +59,7 @@ public class DrawingCanvas extends Activity {
         });
     }
 
-    private void archiveAndShowProceed() {
+    private void archiveAndProceed() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean archiveDrawings = preferences.getBoolean("archive_drawings", false);
 
@@ -76,7 +74,25 @@ public class DrawingCanvas extends Activity {
             bitmapPath = bitmap.saveAsTemporaryPNG();
         }
 
-        showResults(bitmapPath);
+        // TODO better bitmap memory management
+        bitmap.getBitmap().recycle();
+
+        boolean collectEstimates = preferences.getBoolean("collect_user_estimates", false);
+        if (collectEstimates) {
+            proceedToCollectEstimate(bitmapPath);
+        }
+        else {
+            proceedToResults(bitmapPath);
+        }
+    }
+
+    private void proceedToCollectEstimate(String bitmapPath) {
+        Intent collectEstimatesIntent = new Intent(DrawingCanvas.this, UserEstimateCanvas.class);
+
+        collectEstimatesIntent.putExtra("drawing_path", bitmapPath);
+        collectEstimatesIntent.putExtra("model_slug", modelImageSlug);
+
+        startActivity(collectEstimatesIntent);
     }
 
     private DrawingBitmap getDrawingBitmap() {
@@ -88,7 +104,7 @@ public class DrawingCanvas extends Activity {
                 .resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_SAVE, false);
     }
 
-    private void showResults(String drawingBitmapPath) {
+    private void proceedToResults(String drawingBitmapPath) {
         Intent showResultsIntent = new Intent(DrawingCanvas.this, ResultCanvas.class);
 
         showResultsIntent.putExtra("drawing_path", drawingBitmapPath);

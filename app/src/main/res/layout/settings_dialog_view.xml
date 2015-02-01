@@ -1,7 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="25dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Player name"
+        android:id="@+id/textView4"
+        android:textStyle="bold"
+        android:paddingBottom="5dp" />
 
     <LinearLayout
         android:focusable="true" android:focusableInTouchMode="true"
@@ -16,15 +26,28 @@
         android:ems="10"
         android:id="@+id/player_name_edittext" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Data collecting"
+        android:id="@+id/textView5"
+        android:textStyle="bold"
+        android:paddingTop="20dp"
+        android:paddingBottom="5dp" />
+
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/archive_drawings"
-        android:id="@+id/archive_drawings_checkbox" />
+        android:id="@+id/archive_drawings_checkbox"
+        android:layout_marginBottom="5dp"
+        android:paddingLeft="10dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/collect_user_estimates"
-        android:id="@+id/collect_user_estimates_checkbox" />
+        android:id="@+id/collect_user_estimates_checkbox"
+        android:paddingLeft="10dp" />
 </LinearLayout>

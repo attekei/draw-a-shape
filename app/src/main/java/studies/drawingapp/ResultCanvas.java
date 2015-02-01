@@ -9,11 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -24,7 +22,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 
 public class ResultCanvas extends Activity {
@@ -54,31 +51,33 @@ public class ResultCanvas extends Activity {
 
         showModelAndDrawing();
         bindEvents();
-        runComparision();
+        runComparison();
     }
 
-    private void runComparision() {
+    private void runComparison() {
+        ImageComparisonResult alreadyCalculatedResult = (ImageComparisonResult) extras.get("comparison_result");
+        if (alreadyCalculatedResult != null) {
+            comparisonResult = alreadyCalculatedResult;
+            showResults();
+        }
+        else {
+            DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
+            comparison = new ImageComparison(this, modelSlug);
 
-        DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
-        DrawingBitmap downscaledBitmap = drawingBitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
-        ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions();
-
-        comparison = new ImageComparison(this, modelSlug);
-        final Context context = this;
-
-        comparison.run(pixels, new Response.Listener<ImageComparisonResult>() {
-            @Override
-            public void onResponse(ImageComparisonResult result) {
-                comparisonResult = result;
-                askEstimateFromUser();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                statusText.setText("Calculation failed, probably API problem :(");
-            }
-        });
+            comparison.run(drawingBitmap, new Response.Listener<ImageComparisonResult>() {
+                @Override
+                public void onResponse(ImageComparisonResult result) {
+                    comparisonResult = result;
+                    showResults();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    statusText.setText("Calculation failed, probably API problem :(");
+                }
+            });
+        }
     }
 
     private void showErrorDialog(String message, Context context) {
@@ -159,8 +158,8 @@ public class ResultCanvas extends Activity {
     private void showModelAndDrawing(){
         final ImageView drawingView = (ImageView) findViewById(R.id.drawingView);
         final FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-
-        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{drawingDrawable, modelDrawable});
+        modelDrawable.setAlpha(80);
+        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{modelDrawable, drawingDrawable});
         drawingView.setImageDrawable(layerDrawable);
     }
 
