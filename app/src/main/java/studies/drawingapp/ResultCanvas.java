@@ -149,9 +149,8 @@ public class ResultCanvas extends Activity {
     }
 
     private void showMainMenu() {
-        Intent intent = new Intent(this, MainMenuGraph.class);
+        Intent intent = new Intent(getApplicationContext(), MainMenuGraph.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

@@ -44,23 +44,17 @@ public class MainMenuGraph extends Activity {
     private void bindEvents() {
         imgOne.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainMenuGraph.this, DrawingCanvas.class);
-                intent.putExtra("model_slug", "apple");
-                startActivity(intent);
+                startNewDrawing("apple");
             }
         });
         imgTwo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainMenuGraph.this, DrawingCanvas.class);
-                intent.putExtra("model_slug", "bear");
-                startActivity(intent);
+                startNewDrawing("bear");
             }
         });
         imgThree.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainMenuGraph.this, DrawingCanvas.class);
-                intent.putExtra("model_slug", "stool");
-                startActivity(intent);
+                startNewDrawing("stool");
             }
         });
 
@@ -74,6 +68,12 @@ public class MainMenuGraph extends Activity {
         effects.bindImageViewMotionEffects(imgOne);
         effects.bindImageViewMotionEffects(imgTwo);
         effects.bindImageViewMotionEffects(imgThree);
+    }
 
+    private void startNewDrawing(String modelSlug) {
+        Intent intent = new Intent(this, DrawingCanvas.class);
+        intent.putExtra("model_slug", modelSlug);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
     }
 }

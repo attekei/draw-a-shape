@@ -3,11 +3,12 @@ package studies.drawingapp;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -23,9 +24,9 @@ public class UserEstimateCanvas extends Activity {
 
     private Bundle extras;
     private String modelSlug;
-    private ImageButton restart;
+    private ImageButton proceed;
     private Drawable modelDrawable;
-    private TextView statusText;
+    private TextView ratingText;
     private Drawable drawingDrawable;
     private ImageComparisonResult comparisonResult;
     private ImageComparison comparison;
@@ -42,9 +43,9 @@ public class UserEstimateCanvas extends Activity {
         extras = getIntent().getExtras();
         modelSlug = extras.getString("model_slug");
 
-        restart = (ImageButton) findViewById(R.id.restart);
+        proceed = (ImageButton) findViewById(R.id.restart);
         modelDrawable = getModelDrawable();
-        statusText = (TextView) findViewById(R.id.statusText);
+        ratingText = (TextView) findViewById(R.id.ratingText);
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
 
@@ -54,6 +55,15 @@ public class UserEstimateCanvas extends Activity {
 
         runComparison();
         bindEvents();
+        disableProceedButton();
+    }
+
+    private void disableProceedButton() {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        proceed.setColorFilter(filter);
     }
 
     private void runComparison() {
@@ -92,14 +102,48 @@ public class UserEstimateCanvas extends Activity {
     }
 
     private void bindEvents() {
-        restart.setOnClickListener(new View.OnClickListener() {
+        proceed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 proceedToResults();
+            }
+        });
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if (rating < 0.5) {
+                    rating = 0.5f;
+                    ratingBar.setRating(rating);
+                }
+
+                String status = "";
+                if (rating <= 1) {
+                    status = "Not even close";
+                }
+                else if (rating <= 2) {
+                    status = "Not totally hopeless";
+                }
+                else if (rating <= 3) {
+                    status = "Not good or bad";
+                }
+                else if (rating <= 4) {
+                    status = "Pretty similar as original";
+                }
+                else if (rating <= 5) {
+                    status = "Really good match";
+                }
+
+                ratingText.setTypeface(null, Typeface.ITALIC);
+                ratingText.setText(status);
+
+                proceed.setColorFilter(null);
             }
         });
     }
 
     private void proceedToResults() {
+        if (ratingBar.getRating() == 0f) return;
+
         if (comparisonDone) {
             if (progressDialog != null) progressDialog.dismiss();
             // Currently only fire and forget the new estimate

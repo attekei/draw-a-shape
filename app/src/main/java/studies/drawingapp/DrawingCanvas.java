@@ -92,6 +92,8 @@ public class DrawingCanvas extends Activity {
         collectEstimatesIntent.putExtra("drawing_path", bitmapPath);
         collectEstimatesIntent.putExtra("model_slug", modelImageSlug);
 
+        collectEstimatesIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
         startActivity(collectEstimatesIntent);
     }
 
@@ -109,6 +111,8 @@ public class DrawingCanvas extends Activity {
 
         showResultsIntent.putExtra("drawing_path", drawingBitmapPath);
         showResultsIntent.putExtra("model_slug", modelImageSlug);
+
+        showResultsIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
         startActivity(showResultsIntent);
     }
