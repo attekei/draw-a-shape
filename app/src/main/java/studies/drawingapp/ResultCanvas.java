@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -34,6 +38,10 @@ public class ResultCanvas extends Activity {
     private ImageComparisonResult comparisonResult = null;
     private ImageComparison comparison;
     private TextView statusText;
+    private DrawingBitmap drawingBitmap;
+    private ImageView drawingView;
+    private TextView loadingTextView;
+    private RatingBar ratingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +56,24 @@ public class ResultCanvas extends Activity {
         statusText = (TextView) findViewById(R.id.statusText);
 
         drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
+        drawingView = (ImageView) findViewById(R.id.drawingView);
+        loadingTextView = (TextView) findViewById(R.id.loadingTextView);
 
-        showModelAndDrawing();
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+
         bindEvents();
         runComparison();
     }
 
     private void runComparison() {
         ImageComparisonResult alreadyCalculatedResult = (ImageComparisonResult) extras.get("comparison_result");
+        drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
         if (alreadyCalculatedResult != null) {
             comparisonResult = alreadyCalculatedResult;
             showResults();
         }
         else {
-            DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
+            loadingTextView.setVisibility(View.VISIBLE);
             comparison = new ImageComparison(this, modelSlug);
 
             comparison.run(drawingBitmap, new Response.Listener<ImageComparisonResult>() {
@@ -78,6 +90,67 @@ public class ResultCanvas extends Activity {
                 }
             });
         }
+    }
+
+    private void showResults() {
+        //String percents = MessageFormat.format("{0,number,#.###}", comparisonResult.systemEstimate * 100);
+        statusText.setText("Your result:");
+        showImagesByComparisonResults();
+        ratingBar.setRating((float)(5.0f * comparisonResult.systemEstimate));
+        ratingBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showImagesByComparisonResults() {
+        int modelMargin = 150;
+        Bitmap modelBitmap = DrawingBitmap.fromDrawable(modelDrawable).getBitmap();
+
+        int combinedWidth = modelBitmap.getWidth() + modelMargin;
+        int combinedHeight = modelBitmap.getHeight() + modelMargin;
+        double density = getResources().getDisplayMetrics().density;
+
+        Matrix marginMatrix = new Matrix();
+        marginMatrix.setTranslate(modelMargin / 2, modelMargin / 2);
+
+        Matrix drawingMatrix = getDrawingTransformationMatrix();
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(combinedWidth, combinedHeight, Bitmap.Config.ARGB_8888);
+        Canvas combinedCanvas = new Canvas(combinedBitmap);
+
+        combinedCanvas.setMatrix(marginMatrix);
+        combinedCanvas.drawBitmap(modelBitmap, 0, 0, null);
+
+        drawingMatrix.postScale((float)density, (float)density, 0, 0);
+        drawingMatrix.postConcat(marginMatrix);
+        combinedCanvas.setMatrix(drawingMatrix);
+
+        combinedCanvas.drawBitmap(drawingBitmap.getBitmap(), 0, 0, null);
+
+        drawingView.setImageBitmap(combinedBitmap);
+
+        loadingTextView.setVisibility(View.GONE);
+
+    }
+
+
+    private Matrix getDrawingTransformationMatrix() {
+        double[] dMean = comparisonResult.drawingMean, mMean = comparisonResult.modelMean;
+        double[] stdDevScale = comparisonResult.drawingStdDevScale;
+        double[] transf = comparisonResult.cmaesTransformations;
+
+        Matrix drawingMatrix = new Matrix();
+
+        // Model and drawing mean to same coordinates
+        drawingMatrix.postTranslate((float) (mMean[0] - dMean[0]), (float) (mMean[1] - dMean[1]));
+
+        // Standard deviation scaling
+        drawingMatrix.postScale((float) stdDevScale[0], (float) stdDevScale[1], (float) mMean[0], (float) mMean[1]);
+
+        // Transformations by evolution algorithm
+        drawingMatrix.postScale((float)transf[2], (float)transf[3], (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postRotate((float)Math.toDegrees(transf[4]), (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postTranslate((float)transf[0], (float)transf[1]);
+
+        return drawingMatrix;
     }
 
     private void showErrorDialog(String message, Context context) {
@@ -131,11 +204,6 @@ public class ResultCanvas extends Activity {
         dialog.show();
     }
 
-    private void showResults() {
-        String percents = MessageFormat.format("{0,number,#.###}", comparisonResult.systemEstimate * 100);
-        statusText.setText("Match: " + percents + " %");
-    }
-
     private void bindEvents() {
         restart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -152,14 +220,6 @@ public class ResultCanvas extends Activity {
         Intent intent = new Intent(getApplicationContext(), MainMenuGraph.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-    private void showModelAndDrawing(){
-        final ImageView drawingView = (ImageView) findViewById(R.id.drawingView);
-        final FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-        modelDrawable.setAlpha(80);
-        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{modelDrawable, drawingDrawable});
-        drawingView.setImageDrawable(layerDrawable);
     }
 
     private Drawable getModelDrawable() {

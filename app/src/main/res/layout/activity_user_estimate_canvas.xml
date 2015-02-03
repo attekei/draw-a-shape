@@ -22,8 +22,8 @@
         android:paddingBottom="50dp" />
 
     <ImageView
-        android:layout_width="370dp"
-        android:layout_height="370dp"
+        android:layout_width="451dp"
+        android:layout_height="408dp"
         android:id="@+id/drawingView"
         android:layout_gravity="center" />
 
@@ -64,7 +64,7 @@
         android:layout_weight="0.21"
         android:textAlignment="center"
         android:gravity="center_horizontal"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 
 </FrameLayout>

@@ -163,14 +163,18 @@ public class DrawingBitmap {
     }
 
     public DrawingBitmap resizeImage(int maxPixelCount, boolean enableUpscaling) {
-        double nonLimitedScale = Math.sqrt((double)maxPixelCount/ (bitmap.getWidth() * bitmap.getHeight()));
-        double scale = enableUpscaling ? nonLimitedScale : (nonLimitedScale < 1 ? nonLimitedScale : 1);
+        double scale = getResizeScale(maxPixelCount, enableUpscaling);
         return new DrawingBitmap(
                 Bitmap.createScaledBitmap(bitmap, (int)(scale * bitmap.getWidth()), (int)(scale * bitmap.getHeight()), true)
         );
     }
 
-    public ArrayList<int[]> getBlackPixelPositions() {
+    public double getResizeScale(double maxPixelCount, boolean enableUpscaling) {
+        double nonLimitedScale = Math.sqrt(maxPixelCount / (bitmap.getWidth() * bitmap.getHeight()));
+        return enableUpscaling ? nonLimitedScale : (nonLimitedScale < 1 ? nonLimitedScale : 1);
+    }
+
+    public ArrayList<int[]> getBlackPixelPositions(double scaleMultiplier) {
         int width = bitmap.getWidth(), height = bitmap.getHeight();
 
         int[] pixels = new int[width * height];
@@ -182,7 +186,7 @@ public class DrawingBitmap {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (pixels[ y * width + x] != 0) {
-                    blackPixels.add(new int[]{x, y});
+                    blackPixels.add(new int[]{(int)Math.round(scaleMultiplier * x), (int)Math.round(scaleMultiplier * y)});
                 }
             }
         }

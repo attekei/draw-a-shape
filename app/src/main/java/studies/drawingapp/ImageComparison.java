@@ -36,8 +36,10 @@ public class ImageComparison {
 
     public void run(DrawingBitmap bitmap, final Listener<ImageComparisonResult> resultListener,
                     final ErrorListener errorListener) {
+
         DrawingBitmap downscaledBitmap = bitmap.resizeImage(DrawingBitmap.PIXEL_COUNT_FOR_COMP, false);
-        ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions();
+        double scaleMultiplier = 1 / bitmap.getResizeScale(DrawingBitmap.PIXEL_COUNT_FOR_COMP, true);
+        ArrayList<int[]> pixels = downscaledBitmap.getBlackPixelPositions(scaleMultiplier);
         run(pixels, resultListener, errorListener);
     }
 

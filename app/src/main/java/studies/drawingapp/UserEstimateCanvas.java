@@ -3,14 +3,15 @@ package studies.drawingapp;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -34,6 +35,10 @@ public class UserEstimateCanvas extends Activity {
     private boolean wantingToProceed = false;
     private ProgressDialog progressDialog = null;
     private RatingBar ratingBar;
+    private ImageView drawingView;
+    private DrawingBitmap drawingBitmap;
+    private double preComparisonScale;
+    private TextView loadingTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,12 @@ public class UserEstimateCanvas extends Activity {
         proceed = (ImageButton) findViewById(R.id.restart);
         modelDrawable = getModelDrawable();
         ratingText = (TextView) findViewById(R.id.ratingText);
+        drawingView = (ImageView) findViewById(R.id.drawingView);
+        loadingTextView = (TextView) findViewById(R.id.loadingTextView);
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
 
         drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
-
-        showModelAndDrawing();
 
         runComparison();
         bindEvents();
@@ -67,7 +72,9 @@ public class UserEstimateCanvas extends Activity {
     }
 
     private void runComparison() {
-        DrawingBitmap drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
+        drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
+        preComparisonScale = drawingBitmap.getResizeScale(DrawingBitmap.PIXEL_COUNT_FOR_COMP, true);
+
         comparison = new ImageComparison(this, modelSlug);
 
         comparison.run(drawingBitmap, new Response.Listener<ImageComparisonResult>() {
@@ -76,6 +83,7 @@ public class UserEstimateCanvas extends Activity {
                 comparisonResult = result;
                 comparisonDone = true;
 
+                showImagesByComparisonResults();
                 if (wantingToProceed) proceedToResults();
             }
         }, new Response.ErrorListener() {
@@ -88,12 +96,56 @@ public class UserEstimateCanvas extends Activity {
         });
     }
 
-    private void showModelAndDrawing(){
-        final ImageView drawingView = (ImageView) findViewById(R.id.drawingView);
-        final FrameLayout frame = (FrameLayout) findViewById(R.id.frame);
-        modelDrawable.setAlpha(80);
-        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{modelDrawable, drawingDrawable});
-        drawingView.setImageDrawable(layerDrawable);
+    private void showImagesByComparisonResults() {
+        int modelMargin = 150;
+        Bitmap modelBitmap = DrawingBitmap.fromDrawable(modelDrawable).getBitmap();
+
+        int combinedWidth = modelBitmap.getWidth() + modelMargin;
+        int combinedHeight = modelBitmap.getHeight() + modelMargin;
+        double density = getResources().getDisplayMetrics().density;
+
+        Matrix marginMatrix = new Matrix();
+        marginMatrix.setTranslate(modelMargin / 2, modelMargin / 2);
+
+        Matrix drawingMatrix = getDrawingTransformationMatrix();
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(combinedWidth, combinedHeight, Bitmap.Config.ARGB_8888);
+        Canvas combinedCanvas = new Canvas(combinedBitmap);
+
+        combinedCanvas.setMatrix(marginMatrix);
+        combinedCanvas.drawBitmap(modelBitmap, 0, 0, null);
+
+        drawingMatrix.postScale((float)density, (float)density, 0, 0);
+        drawingMatrix.postConcat(marginMatrix);
+        combinedCanvas.setMatrix(drawingMatrix);
+
+        combinedCanvas.drawBitmap(drawingBitmap.getBitmap(), 0, 0, null);
+
+        drawingView.setImageBitmap(combinedBitmap);
+
+        loadingTextView.setVisibility(View.GONE);
+
+    }
+
+    private Matrix getDrawingTransformationMatrix() {
+        double[] dMean = comparisonResult.drawingMean, mMean = comparisonResult.modelMean;
+        double[] stdDevScale = comparisonResult.drawingStdDevScale;
+        double[] transf = comparisonResult.cmaesTransformations;
+
+        Matrix drawingMatrix = new Matrix();
+
+        // Model and drawing mean to same coordinates
+        drawingMatrix.postTranslate((float) (mMean[0] - dMean[0]), (float) (mMean[1] - dMean[1]));
+
+        // Standard deviation scaling
+        drawingMatrix.postScale((float) stdDevScale[0], (float) stdDevScale[1], (float) mMean[0], (float) mMean[1]);
+
+        // Transformations by evolution algorithm
+        drawingMatrix.postScale((float)transf[2], (float)transf[3], (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postRotate((float)Math.toDegrees(transf[4]), (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postTranslate((float)transf[0], (float)transf[1]);
+
+        return drawingMatrix;
     }
 
     private Drawable getModelDrawable() {

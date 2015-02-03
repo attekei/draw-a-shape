@@ -19,9 +19,13 @@ public class ModelImageProvider {
     }
 
     public Drawable getDrawable(String imageSlug) {
+        int resID = getResID(imageSlug);
+        return resID != 0 ? context.getResources().getDrawable(resID) : null;
+    }
+
+    public int getResID(String imageSlug) {
         Resources res = context.getResources();
-        int resID = res.getIdentifier("model_image_" + imageSlug, "drawable", context.getPackageName());
-        return resID != 0 ? res.getDrawable(resID) : null;
+        return res.getIdentifier("model_image_" + imageSlug, "drawable", context.getPackageName());
     }
 
     /**
