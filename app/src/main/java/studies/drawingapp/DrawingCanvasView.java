@@ -27,8 +27,7 @@ public class DrawingCanvasView extends View {
     private Bitmap canvasBitmap;
     private static Paint drawPaint;
     private static boolean draw = true;
-
-
+    private Paint eraserPreviewPaint;
 
     public DrawingCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -56,6 +55,13 @@ public class DrawingCanvasView extends View {
         eraserPaint.setStrokeJoin(Paint.Join.ROUND);
         eraserPaint.setStrokeCap(Paint.Cap.ROUND);
 
+        eraserPreviewPaint = new Paint();
+        eraserPreviewPaint.setColor(Color.rgb(241, 241, 241));
+        eraserPreviewPaint.setStrokeWidth(eraserStrokeWidth);
+        eraserPreviewPaint.setStyle(Paint.Style.STROKE);
+        eraserPreviewPaint.setStrokeJoin(Paint.Join.ROUND);
+        eraserPreviewPaint.setStrokeCap(Paint.Cap.ROUND);
+
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
@@ -68,36 +74,27 @@ public class DrawingCanvasView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-
-        if (!isEraser) canvas.drawPath(drawPath, drawPaint);
+        canvas.drawPath(drawPath, isEraser ? eraserPreviewPaint : drawPaint);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (draw) {
             if (isEraser) {
-                reactToEraseEvent(event.getAction(), event.getX(), event.getY());
+                reactToEvent(event.getAction(), event.getX(), event.getY(), eraserPaint);
             }
             else {
-                reactToPenEvent(event.getAction(), event.getX(), event.getY());
+                reactToEvent(event.getAction(), event.getX(), event.getY(), drawPaint);
             }
 
         }
         redrawScreen();
 
         return true;
-
     }
 
-    private void reactToEraseEvent(int action, float x, float y) {
-        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
-            drawCanvas.drawLine(x, y, x + 1, y + 1, eraserPaint);
-        }
-    }
-
-    private void reactToPenEvent(int action, float touchX, float touchY) {
+    private void reactToEvent(int action, float touchX, float touchY, Paint paint) {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 setPathStartLocation(touchX, touchY);
@@ -106,7 +103,7 @@ public class DrawingCanvasView extends View {
                 continuePathToLocation(touchX, touchY);
                 break;
             case MotionEvent.ACTION_UP:
-                drawPathAndStartNewPath(touchX, touchY);
+                drawPathAndStartNewPath(touchX, touchY, paint);
                 break;
         }
     }
@@ -119,9 +116,9 @@ public class DrawingCanvasView extends View {
         drawPath.moveTo(x, y);
     }
 
-    private void drawPathAndStartNewPath(float x, float y) {
+    private void drawPathAndStartNewPath(float x, float y, Paint paint) {
         drawPath.lineTo(x, y);
-        drawCanvas.drawPath(drawPath, drawPaint);
+        drawCanvas.drawPath(drawPath, paint);
         drawPath.reset();
     }
 
