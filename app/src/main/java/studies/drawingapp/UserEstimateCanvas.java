@@ -141,8 +141,8 @@ public class UserEstimateCanvas extends Activity {
         drawingMatrix.postScale((float) stdDevScale[0], (float) stdDevScale[1], (float) mMean[0], (float) mMean[1]);
 
         // Transformations by evolution algorithm
-        drawingMatrix.postScale((float)transf[2], (float)transf[3], (float)mMean[0], (float)mMean[1]);
-        drawingMatrix.postRotate((float)Math.toDegrees(transf[4]), (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postScale((float)transf[2], (float)transf[2], (float)mMean[0], (float)mMean[1]);
+        drawingMatrix.postRotate((float)Math.toDegrees(transf[3]), (float)mMean[0], (float)mMean[1]);
         drawingMatrix.postTranslate((float)transf[0], (float)transf[1]);
 
         return drawingMatrix;
