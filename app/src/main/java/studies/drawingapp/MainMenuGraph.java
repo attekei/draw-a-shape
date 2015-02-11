@@ -37,6 +37,12 @@ public class MainMenuGraph extends Activity {
 
         bindEvents();
         initSettingsDialog();
+        pingServer();
+    }
+
+    private void pingServer() {
+        ImageComparison imageComparison = new ImageComparison(this, "");
+        imageComparison.pingServer();
     }
 
     private void initSettingsDialog() {

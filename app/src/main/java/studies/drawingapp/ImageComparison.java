@@ -77,4 +77,13 @@ public class ImageComparison {
 
         queue.add(request);
     }
+
+    /**
+     * Make request to the root of server to wake server from Heroku sleep mode
+     */
+    public void pingServer() {
+        Map<String,String> params = new HashMap<String, String>();
+        APIRequest request = new APIRequest(Method.POST, "", params, null, null);
+        queue.add(request);
+    }
 }
