@@ -22,6 +22,8 @@ import com.android.volley.VolleyError;
 
 
 public class UserEstimateCanvas extends Activity {
+    // TODO Refactor async logic using e.g. RXJava
+    // (currently async logic is hard to reason due to use of mutable variables)
 
     private Bundle extras;
     private String modelSlug;
@@ -37,8 +39,9 @@ public class UserEstimateCanvas extends Activity {
     private RatingBar ratingBar;
     private ImageView drawingView;
     private DrawingBitmap drawingBitmap;
-    private double preComparisonScale;
     private TextView loadingTextView;
+    private boolean cancelling = false;
+    private ImageButton cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +52,13 @@ public class UserEstimateCanvas extends Activity {
         modelSlug = extras.getString("model_slug");
 
         proceed = (ImageButton) findViewById(R.id.restart);
+        cancel = (ImageButton) findViewById(R.id.cancel);
         modelDrawable = getModelDrawable();
         ratingText = (TextView) findViewById(R.id.ratingText);
         drawingView = (ImageView) findViewById(R.id.drawingView);
         loadingTextView = (TextView) findViewById(R.id.loadingTextView);
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
-
         drawingDrawable = Drawable.createFromPath(extras.getString("drawing_path"));
 
         runComparison();
@@ -73,7 +76,6 @@ public class UserEstimateCanvas extends Activity {
 
     private void runComparison() {
         drawingBitmap = DrawingBitmap.fromDrawable(drawingDrawable);
-        preComparisonScale = drawingBitmap.getResizeScale(DrawingBitmap.PIXEL_COUNT_FOR_COMP, true);
 
         comparison = new ImageComparison(this, modelSlug);
 
@@ -124,7 +126,6 @@ public class UserEstimateCanvas extends Activity {
         drawingView.setImageBitmap(combinedBitmap);
 
         loadingTextView.setVisibility(View.GONE);
-
     }
 
     private Matrix getDrawingTransformationMatrix() {
@@ -156,6 +157,14 @@ public class UserEstimateCanvas extends Activity {
     private void bindEvents() {
         proceed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                proceedToResults();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelling = true;
                 proceedToResults();
             }
         });
@@ -194,13 +203,17 @@ public class UserEstimateCanvas extends Activity {
     }
 
     private void proceedToResults() {
-        if (ratingBar.getRating() == 0f) return;
+        if (!cancelling && ratingBar.getRating() == 0f) return;
 
         if (comparisonDone) {
             if (progressDialog != null) progressDialog.dismiss();
             // Currently only fire and forget the new estimate
-            comparison.addUserEstimate(ratingBar.getRating() / 5.0, comparisonResult.squareError, null, null);
 
+            if (!cancelling) {
+                comparison.addUserEstimate(ratingBar.getRating() / 5.0, comparisonResult.squareError, null, null);
+            }
+
+            /**
             Intent showResultsIntent = new Intent(UserEstimateCanvas.this, ResultCanvas.class);
 
             showResultsIntent.putExtra("drawing_path", extras.getString("drawing_path"));
@@ -208,6 +221,11 @@ public class UserEstimateCanvas extends Activity {
             showResultsIntent.putExtra("comparison_result", comparisonResult);
 
             startActivity(showResultsIntent);
+             */
+
+            Intent intent = new Intent(getApplicationContext(), MainMenuGraph.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
         else {
             progressDialog = new ProgressDialog(this);
