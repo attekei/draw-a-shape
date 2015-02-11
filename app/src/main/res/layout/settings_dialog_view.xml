@@ -2,7 +2,8 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="25dp">
+    android:padding="25dp"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,4 +51,26 @@
         android:text="@string/collect_user_estimates"
         android:id="@+id/collect_user_estimates_checkbox"
         android:paddingLeft="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Credits"
+        android:id="@+id/textView7"
+        android:textStyle="bold"
+        android:paddingTop="20dp"
+        android:paddingBottom="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Design: Atte Keinänen, Jooel Friman, Perttu Hämäläinen\nImplementation: Atte Keinänen, Jooel Friman"
+        android:id="@+id/textView6"
+        android:focusableInTouchMode="true"
+        android:textSize="16dp"
+        android:textColor="#000000"
+        android:typeface="sans"
+        android:layout_weight="0.23" />
 </LinearLayout>

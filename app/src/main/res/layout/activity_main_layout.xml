@@ -100,21 +100,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Game prototype made by Atte Keinänen and Jooel Friman "
-            android:id="@+id/textView3"
-            android:focusableInTouchMode="true"
-            android:textSize="40dp"
-            android:textColor="#2500FF"
-            android:typeface="sans"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="25dp"
-            android:layout_weight="0.21"
-            android:paddingBottom="20dp" />
-
     </LinearLayout>
 
     <ImageButton
