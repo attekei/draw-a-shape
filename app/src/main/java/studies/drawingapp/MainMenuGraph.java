@@ -22,6 +22,7 @@ public class MainMenuGraph extends Activity {
     private ImageView imgThree;
     private ImageButton settingsButton;
     private DialogFragment settingsDialogFragment;
+    private ImageView imgFour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class MainMenuGraph extends Activity {
         imgOne = (ImageView) findViewById(R.id.imageButton);
         imgTwo = (ImageView) findViewById(R.id.imageButton2);
         imgThree = (ImageView) findViewById(R.id.imageButton3);
+        imgFour = (ImageView) findViewById(R.id.imageButton4);
         settingsButton = (ImageButton) findViewById(R.id.settingsButton);
 
         bindEvents();
@@ -49,12 +51,17 @@ public class MainMenuGraph extends Activity {
         });
         imgTwo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startNewDrawing("bear");
+                startNewDrawing("circle");
             }
         });
         imgThree.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startNewDrawing("stool");
+            }
+        });
+        imgFour.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startNewDrawing("bear");
             }
         });
 
