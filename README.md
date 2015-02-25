@@ -1,5 +1,5 @@
 # draw-a-shape
-A game where you can test how good you are at drawing.
+An Android game for testing how good your drawing skills are.
 
 # About
 Uses [drawing-app-algorithm](https://github.com/attrck/drawing-app-algorithm) via a web api. Tested with Samsung Galazy Note 10.1 2014 Edition.
